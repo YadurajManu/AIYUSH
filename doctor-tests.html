@@ -150,17 +150,93 @@
 
         .test-card .stat-item {
             text-align: center;
+            position: relative;
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .test-card .stat-item:hover {
+            background: var(--primary-gradient);
+        }
+
+        .test-card .stat-item:hover .stat-value,
+        .test-card .stat-item:hover .stat-label {
+            color: white;
         }
 
         .test-card .stat-value {
             font-size: 1.2rem;
             font-weight: 600;
             color: #333;
+            transition: color 0.3s ease;
         }
 
         .test-card .stat-label {
             font-size: 0.85rem;
             color: #666;
+            transition: color 0.3s ease;
+        }
+
+        .test-card .quick-action {
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+            background: var(--primary-gradient);
+            color: white;
+            padding: 0.5rem;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+
+        .test-card:hover .quick-action {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .test-card .status-indicator {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--success-gradient);
+            box-shadow: 0 0 10px rgba(67, 233, 123, 0.5);
+            animation: pulse 2s infinite;
+        }
+
+        .test-card .tech-stack {
+            position: absolute;
+            bottom: 1rem;
+            left: 1rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .test-card .tech-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: #333;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.5; }
+            100% { transform: scale(1); opacity: 1; }
         }
 
         .test-card .card-badge {
@@ -283,6 +359,11 @@
         <div class="test-card animate__animated animate__fadeInUp" onclick="window.location.href='retina.html'">
             <div class="card-image" style="background-image: url('https://img.freepik.com/free-photo/close-up-eye-examination_23-2149272551.jpg')">
                 <span class="card-badge">AI-Powered</span>
+                <div class="status-indicator"></div>
+                <div class="tech-stack">
+                    <div class="tech-icon"><i class="bi bi-cpu"></i></div>
+                    <div class="tech-icon"><i class="bi bi-eye"></i></div>
+                </div>
             </div>
             <div class="card-content">
                 <h3>Retinal Analysis</h3>
@@ -294,9 +375,12 @@
                     <div class="stat-label">Accuracy</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-value">2min</div>
+                    <div class="stat-value">30s</div>
                     <div class="stat-label">Process Time</div>
                 </div>
+            </div>
+            <div class="quick-action">
+                <i class="bi bi-arrow-right"></i>
             </div>
         </div>
 
@@ -304,6 +388,11 @@
         <div class="test-card animate__animated animate__fadeInUp" onclick="window.location.href='arthritis.html'">
             <div class="card-image" style="background-image: url('https://img.freepik.com/free-photo/senior-woman-suffering-from-joint-pain_23-2148957651.jpg')">
                 <span class="card-badge">Real-time</span>
+                <div class="status-indicator"></div>
+                <div class="tech-stack">
+                    <div class="tech-icon"><i class="bi bi-cpu"></i></div>
+                    <div class="tech-icon"><i class="bi bi-camera"></i></div>
+                </div>
             </div>
             <div class="card-content">
                 <h3>Arthritis Prediction</h3>
@@ -315,9 +404,12 @@
                     <div class="stat-label">Accuracy</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-value">3min</div>
+                    <div class="stat-value">45s</div>
                     <div class="stat-label">Process Time</div>
                 </div>
+            </div>
+            <div class="quick-action">
+                <i class="bi bi-arrow-right"></i>
             </div>
         </div>
 
@@ -325,6 +417,11 @@
         <div class="test-card animate__animated animate__fadeInUp" onclick="window.location.href='Brain-tumor.html'">
             <div class="card-image" style="background-image: url('https://img.freepik.com/free-photo/brain-scan_23-2148957514.jpg')">
                 <span class="card-badge">Deep Learning</span>
+                <div class="status-indicator"></div>
+                <div class="tech-stack">
+                    <div class="tech-icon"><i class="bi bi-cpu"></i></div>
+                    <div class="tech-icon"><i class="bi bi-brain"></i></div>
+                </div>
             </div>
             <div class="card-content">
                 <h3>Brain Tumor Detection</h3>
@@ -336,9 +433,12 @@
                     <div class="stat-label">Accuracy</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-value">5min</div>
+                    <div class="stat-value">50s</div>
                     <div class="stat-label">Process Time</div>
                 </div>
+            </div>
+            <div class="quick-action">
+                <i class="bi bi-arrow-right"></i>
             </div>
         </div>
 
@@ -346,6 +446,11 @@
         <div class="test-card animate__animated animate__fadeInUp" onclick="window.location.href='lungCancer.html'">
             <div class="card-image" style="background-image: url('https://img.freepik.com/free-photo/chest-xray-scan_23-2148957532.jpg')">
                 <span class="card-badge">ML-Enhanced</span>
+                <div class="status-indicator"></div>
+                <div class="tech-stack">
+                    <div class="tech-icon"><i class="bi bi-cpu"></i></div>
+                    <div class="tech-icon"><i class="bi bi-lungs"></i></div>
+                </div>
             </div>
             <div class="card-content">
                 <h3>Lung Cancer Prediction</h3>
@@ -357,9 +462,12 @@
                     <div class="stat-label">Accuracy</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-value">4min</div>
+                    <div class="stat-value">40s</div>
                     <div class="stat-label">Process Time</div>
                 </div>
+            </div>
+            <div class="quick-action">
+                <i class="bi bi-arrow-right"></i>
             </div>
         </div>
 
@@ -367,6 +475,11 @@
         <div class="test-card animate__animated animate__fadeInUp" onclick="window.location.href='goiter.html'">
             <div class="card-image" style="background-image: url('https://img.freepik.com/free-photo/thyroid-gland-examination_23-2148957623.jpg')">
                 <span class="card-badge">AI-Assisted</span>
+                <div class="status-indicator"></div>
+                <div class="tech-stack">
+                    <div class="tech-icon"><i class="bi bi-cpu"></i></div>
+                    <div class="tech-icon"><i class="bi bi-shield"></i></div>
+                </div>
             </div>
             <div class="card-content">
                 <h3>Goiter Analysis</h3>
@@ -378,9 +491,12 @@
                     <div class="stat-label">Accuracy</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-value">3min</div>
+                    <div class="stat-value">35s</div>
                     <div class="stat-label">Process Time</div>
                 </div>
+            </div>
+            <div class="quick-action">
+                <i class="bi bi-arrow-right"></i>
             </div>
         </div>
 
@@ -388,6 +504,11 @@
         <div class="test-card animate__animated animate__fadeInUp" onclick="window.location.href='prediction.html'">
             <div class="card-image" style="background-image: url('https://img.freepik.com/free-photo/medical-banner-with-symptoms-diagnosis_23-2148957599.jpg')">
                 <span class="card-badge">Symptom-Based</span>
+                <div class="status-indicator"></div>
+                <div class="tech-stack">
+                    <div class="tech-icon"><i class="bi bi-cpu"></i></div>
+                    <div class="tech-icon"><i class="bi bi-activity"></i></div>
+                </div>
             </div>
             <div class="card-content">
                 <h3>Disease Predictor</h3>
@@ -399,9 +520,12 @@
                     <div class="stat-label">Accuracy</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-value">2min</div>
+                    <div class="stat-value">25s</div>
                     <div class="stat-label">Process Time</div>
                 </div>
+            </div>
+            <div class="quick-action">
+                <i class="bi bi-arrow-right"></i>
             </div>
         </div>
     </div>
