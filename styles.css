@@ -5,14 +5,27 @@ body {
     font-family: 'Inconsolata', monospace;
 }
 #google_translate_element {
-    margin: 0;
-    padding: 0;
-    position:absolute;
-    top:0;
-    left: 50%;
-    width: 100%;
-    z-index: 9999;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 10px;
 }
+
+/* Style the Google Translate dropdown */
+.goog-te-gadget {
+    font-family: 'Inconsolata', monospace !important;
+    color: white !important;
+}
+
+.goog-te-gadget .goog-te-combo {
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 14px;
+    margin: 0;
+}
+
 iframe.goog-te-banner-frame {
     display: none !important; /* Hides the Google Translate banner */
 }
@@ -27,13 +40,6 @@ html {
     display: none !important;
 }
 
-/* Style the dropdown only */
-select.goog-te-combo {
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    padding: 4px;
-    font-size: 14px;
-}
 .navbar {
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
@@ -196,16 +202,21 @@ select.goog-te-combo {
 
 @media (max-width: 768px) {
     .hero-section {
-        padding: 60px 0;
+        padding: 3rem 0;
+    }
+    
+    #google_translate_element {
+        margin: 10px 0;
+        display: block;
         text-align: center;
     }
     
     .quick-action-card {
-        margin-bottom: 20px;
+        margin-bottom: 1rem;
     }
     
     .feature-card, .service-card {
-        margin-bottom: 20px;
+        margin-bottom: 2rem;
     }
 }
 
