@@ -7,134 +7,348 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/apexcharts@3.41.0/dist/apexcharts.css">
     <style>
         :root {
             --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             --secondary-gradient: linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%);
+            --success-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --warning-gradient: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+            --danger-gradient: linear-gradient(135deg, #ff0844 0%, #ffb199 100%);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f2f5;
+            overflow-x: hidden;
         }
 
         .navbar {
             background: var(--primary-gradient) !important;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #fff, #e0e0e0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .welcome-section {
             background: var(--primary-gradient);
             color: white;
-            padding: 3rem 0;
+            padding: 4rem 0;
             margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+            border-bottom-left-radius: 50px;
+            border-bottom-right-radius: 50px;
+        }
+
+        .welcome-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQ0MCIgaGVpZ2h0PSI1MDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMCAwaDE0NDB2NTAwSDB6IiBmaWxsPSIjRkZGIiBvcGFjaXR5PSIuMDUiLz48cGF0aCBkPSJNMTQ0MCA1MDBIMFYwaDcyMHoiIGZpbGw9IiNGRkYiIG9wYWNpdHk9Ii4wNSIvPjwvZz48L3N2Zz4=');
+            opacity: 0.1;
+        }
+
+        .welcome-section .doctor-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 4px solid white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            margin-bottom: 1rem;
         }
 
         .stats-card {
             border: none;
-            border-radius: 15px;
+            border-radius: 20px;
             transition: all 0.3s ease;
-            background: var(--secondary-gradient);
-            color: white;
+            background: white;
+            color: #333;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+
+        .stats-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-gradient);
+        }
+
+        .stats-card .stat-value {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin: 1rem 0;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .feature-card {
             border: none;
-            border-radius: 15px;
+            border-radius: 20px;
             transition: all 0.3s ease;
-            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
             cursor: pointer;
+            background: white;
+            overflow: hidden;
+            position: relative;
+            height: 180px;
         }
 
         .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .feature-card .icon-wrapper {
+            width: 70px;
+            height: 70px;
+            border-radius: 20px;
+            background: var(--primary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            color: white;
+            font-size: 1.8rem;
+            transition: all 0.3s ease;
+            transform: rotate(-5deg);
+        }
+
+        .feature-card:hover .icon-wrapper {
+            transform: rotate(0deg) scale(1.1);
         }
 
         .appointment-card {
             border: none;
             border-radius: 15px;
             margin-bottom: 1rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             transition: all 0.3s ease;
+            background: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .appointment-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 5px;
+            background: var(--primary-gradient);
         }
 
         .appointment-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-
-        .btn-custom {
-            background: var(--primary-gradient);
-            color: white;
-            border: none;
-            border-radius: 25px;
-            padding: 0.5rem 1.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .btn-custom:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            color: white;
+            transform: translateX(5px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
         }
 
         .status-badge {
             padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
+            border-radius: 25px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .status-pending {
-            background-color: #ffd700;
+            background: var(--warning-gradient);
             color: #000;
         }
 
         .status-confirmed {
-            background-color: #28a745;
+            background: var(--success-gradient);
             color: white;
         }
 
         .status-completed {
-            background-color: #17a2b8;
+            background: var(--secondary-gradient);
             color: white;
         }
-        #google_translate_element {
-            margin: 0;
-            padding: 0;
+
+        .quick-actions {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            z-index: 1000;
+        }
+
+        .quick-action-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 20px;
+            background: var(--primary-gradient);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin-bottom: 1rem;
+        }
+
+        .quick-action-btn:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .notification-badge {
             position: absolute;
-            top: 1.5%;
-            left: 55%;
-            width: 100%;
-            z-index: 9999;
-        }
-        iframe.goog-te-banner-frame {
-            display: none !important; /* Hides the Google Translate banner */
-        }
-
-        /* Ensure no extra gap left from the iframe removal */
-        html {
-            margin-top: 0 !important;
+            top: -5px;
+            right: -5px;
+            background: var(--danger-gradient);
+            color: white;
+            border-radius: 10px;
+            padding: 0.2rem 0.6rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            animation: pulse 2s infinite;
         }
 
-        /* Hide the "Translated into" and other dropdown-related elements */
-        .goog-te-gadget-simple span {
-            display: none !important;
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
 
-        /* Style the dropdown only */
-        select.goog-te-combo {
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            padding: 4px;
-            font-size: 14px;
+        #google_translate_element {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            z-index: 1000;
+            background: white;
+            border-radius: 15px;
+            padding: 0.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
-        #logoutButton{
-            z-index: 9999;
+
+        .chart-container {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .section-title i {
+            font-size: 1.8rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .recent-activity {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .activity-item {
+            background: white;
+            border-radius: 15px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            border-left: 4px solid var(--primary-gradient);
+        }
+
+        .activity-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .activity-time {
+            color: #666;
+            font-size: 0.85rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .upcoming-schedule {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .schedule-item {
+            background: white;
+            border-radius: 15px;
+            padding: 1.2rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            border: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .schedule-item:hover {
+            transform: translateX(10px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border-color: transparent;
+        }
+
+        .schedule-time {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 0.8rem 1.2rem;
+            border-radius: 12px;
+            font-weight: 500;
+            min-width: 120px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .patient-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            object-fit: cover;
         }
     </style>
 </head>
-<div id="google_translate_element"></div>
 <body>
+    <div id="google_translate_element"></div>
+    
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
-            <a class="navbar-brand" href="doctor-dashboard.html">
+            <a class="navbar-brand animate__animated animate__fadeIn" href="doctor-dashboard.html">
                 <i class="bi bi-heart-pulse-fill me-2"></i>
                 AIयुष
             </a>
@@ -144,51 +358,241 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="doctor-dashboard.html">Dashboard</a>
+                        <a class="nav-link active" href="doctor-dashboard.html">
+                            <i class="bi bi-house-door me-1"></i> Dashboard
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="doctor-appointments.html">Appointments</a>
+                        <a class="nav-link" href="doctor-appointments.html">
+                            <i class="bi bi-calendar-check me-1"></i> Appointments
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="doctor-reports.html">Reports</a>
+                        <a class="nav-link" href="doctor-reports.html">
+                            <i class="bi bi-file-medical me-1"></i> Reports
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a href="doctor-tests.html" class="nav-link">Tests</a>
+                        <a href="doctor-tests.html" class="nav-link">
+                            <i class="bi bi-clipboard2-pulse me-1"></i> Tests
+                        </a>
                     </li>
                 </ul>
                 <div class="d-flex align-items-center">
-                    <span class="text-light me-3">Welcome, Dr. <span id="userDisplay"></span></span>
-                    <button class="btn btn-outline-light" id="logoutButton" onclick="logout()">Logout</button>
+                    <div class="position-relative me-4">
+                        <i class="bi bi-bell-fill text-light" style="font-size: 1.2rem; cursor: pointer;"></i>
+                        <span class="notification-badge">3</span>
+                    </div>
+                    <img src="https://randomuser.me/api/portraits/men/1.jpg" alt="Doctor" class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;">
+                    <span class="text-light me-3">Dr. <span id="userDisplay"></span></span>
+                    <button class="btn btn-outline-light" id="logoutButton" onclick="logout()">
+                        <i class="bi bi-box-arrow-right me-1"></i> Logout
+                    </button>
                 </div>
             </div>
         </div>
     </nav>
 
     <!-- Welcome Section -->
-    <div class="welcome-section">
+    <section class="welcome-section">
         <div class="container">
             <div class="row align-items-center">
-                <div class="col-md-6">
-                    <h1 class="display-4" id="greetingText">Good Evening!</h1>
-                    <p class="lead">Your medical expertise makes a difference.</p>
+                <div class="col-md-6 animate__animated animate__fadeInLeft">
+                    <div class="d-flex align-items-center mb-4">
+                        <img src="https://randomuser.me/api/portraits/men/1.jpg" alt="Doctor" class="doctor-image">
+                        <div class="ms-4">
+                            <h1 class="display-4 mb-2" id="greetingText">Good Evening!</h1>
+                            <p class="lead mb-0">Welcome back to your dashboard</p>
+                        </div>
+                    </div>
+                    <div class="upcoming-appointment-alert p-3 rounded-3 mb-3" style="background: rgba(255,255,255,0.1);">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-calendar-event me-3" style="font-size: 2rem;"></i>
+                            <div>
+                                <h6 class="mb-1">Next Appointment</h6>
+                                <p class="mb-0" id="nextAppointmentText">Loading...</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-6 animate__animated animate__fadeInRight">
                     <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <div class="card stats-card">
-                                <div class="card-body text-center">
+                        <div class="col-6 mb-3">
+                            <div class="stats-card">
+                                <div class="card-body text-center p-4">
+                                    <i class="bi bi-calendar-check mb-3" style="font-size: 2rem;"></i>
                                     <h2 class="display-4 mb-0" id="todayAppointments">0</h2>
                                     <p class="mb-0">Today's Appointments</p>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <div class="card stats-card">
-                                <div class="card-body text-center">
+                        <div class="col-6 mb-3">
+                            <div class="stats-card">
+                                <div class="card-body text-center p-4">
+                                    <i class="bi bi-file-medical mb-3" style="font-size: 2rem;"></i>
                                     <h2 class="display-4 mb-0" id="pendingReports">0</h2>
                                     <p class="mb-0">Pending Reports</p>
                                 </div>
                             </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="stats-card">
+                                <div class="card-body text-center p-4">
+                                    <i class="bi bi-people mb-3" style="font-size: 2rem;"></i>
+                                    <h2 class="display-4 mb-0" id="totalPatients">0</h2>
+                                    <p class="mb-0">Total Patients</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="stats-card">
+                                <div class="card-body text-center p-4">
+                                    <i class="bi bi-graph-up mb-3" style="font-size: 2rem;"></i>
+                                    <h2 class="display-4 mb-0" id="completionRate">0%</h2>
+                                    <p class="mb-0">Completion Rate</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container my-5">
+        <!-- Quick Actions -->
+        <div class="row mb-5">
+            <div class="col-md-3 animate__animated animate__fadeInUp" data-animate-delay="100">
+                <div class="feature-card">
+                    <div class="card-body text-center d-flex flex-column align-items-center justify-content-center">
+                        <div class="icon-wrapper mb-3">
+                            <i class="bi bi-calendar-plus"></i>
+                        </div>
+                        <h5>Schedule Appointment</h5>
+                        <p class="mb-0 text-muted">Manage patient bookings</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 animate__animated animate__fadeInUp" data-animate-delay="200">
+                <div class="feature-card">
+                    <div class="card-body text-center d-flex flex-column align-items-center justify-content-center">
+                        <div class="icon-wrapper mb-3">
+                            <i class="bi bi-file-earmark-medical"></i>
+                        </div>
+                        <h5>Generate Report</h5>
+                        <p class="mb-0 text-muted">Create patient reports</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 animate__animated animate__fadeInUp" data-animate-delay="300">
+                <div class="feature-card">
+                    <div class="card-body text-center d-flex flex-column align-items-center justify-content-center">
+                        <div class="icon-wrapper mb-3">
+                            <i class="bi bi-clipboard2-pulse"></i>
+                        </div>
+                        <h5>Run Tests</h5>
+                        <p class="mb-0 text-muted">Perform medical tests</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 animate__animated animate__fadeInUp" data-animate-delay="400">
+                <div class="feature-card">
+                    <div class="card-body text-center d-flex flex-column align-items-center justify-content-center">
+                        <div class="icon-wrapper mb-3">
+                            <i class="bi bi-people"></i>
+                        </div>
+                        <h5>Patient Directory</h5>
+                        <p class="mb-0 text-muted">View patient records</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Today's Schedule -->
+            <div class="col-md-8 mb-4">
+                <div class="card">
+                    <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="bi bi-calendar-week me-2"></i>
+                            Today's Schedule
+                        </h5>
+                        <button class="btn btn-sm btn-custom">
+                            <i class="bi bi-calendar me-1"></i> View Calendar
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="upcoming-schedule">
+                            <div class="schedule-item">
+                                <div class="schedule-time">09:00 AM</div>
+                                <div>
+                                    <h6 class="mb-1">John Doe - Lung Cancer Detection</h6>
+                                    <small class="text-muted">Initial Consultation</small>
+                                </div>
+                            </div>
+                            <div class="schedule-item">
+                                <div class="schedule-time">10:30 AM</div>
+                                <div>
+                                    <h6 class="mb-1">Sarah Smith - Brain Tumor Analysis</h6>
+                                    <small class="text-muted">Follow-up</small>
+                                </div>
+                            </div>
+                            <div class="schedule-item">
+                                <div class="schedule-time">02:00 PM</div>
+                                <div>
+                                    <h6 class="mb-1">Mike Johnson - Diabetic Retinopathy</h6>
+                                    <small class="text-muted">Test Results Review</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-header bg-transparent">
+                        <h5 class="mb-0">
+                            <i class="bi bi-activity me-2"></i>
+                            Recent Activity
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="recent-activity">
+                            <div class="activity-item">
+                                <small class="text-muted">10 minutes ago</small>
+                                <p class="mb-0">Generated report for Patient #1234</p>
+                            </div>
+                            <div class="activity-item">
+                                <small class="text-muted">1 hour ago</small>
+                                <p class="mb-0">Completed Brain Tumor Analysis</p>
+                            </div>
+                            <div class="activity-item">
+                                <small class="text-muted">2 hours ago</small>
+                                <p class="mb-0">Updated patient records</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Patient Statistics -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-transparent">
+                        <h5 class="mb-0">
+                            <i class="bi bi-graph-up me-2"></i>
+                            Patient Statistics
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <!-- Chart will be loaded here -->
+                            <canvas id="patientStatistics"></canvas>
                         </div>
                     </div>
                 </div>
@@ -196,67 +600,16 @@
         </div>
     </div>
 
-    <!-- Main Content -->
-    <div class="container">
-        <!-- Feature Cards -->
-        <div class="row mb-4">
-            <div class="col-md-4">
-                <div class="card feature-card" onclick="handleFeatureCardClick('appointments')">
-                    <div class="card-body text-center">
-                        <i class="bi bi-calendar-check display-4"></i>
-                        <h5 class="card-title mt-3">View Appointments</h5>
-                        <p class="card-text">Manage your schedule</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card feature-card" onclick="handleFeatureCardClick('reports')">
-                    <div class="card-body text-center">
-                        <i class="bi bi-file-medical display-4"></i>
-                        <h5 class="card-title mt-3">Generate Reports</h5>
-                        <p class="card-text">Create and manage patient reports</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card feature-card" onclick="handleFeatureCardClick('patients')">
-                    <div class="card-body text-center">
-                        <i class="bi bi-people display-4"></i>
-                        <h5 class="card-title mt-3">Patient List</h5>
-                        <p class="card-text">View your patients</p>
-                    </div>
-                </div>
-            </div>
+    <!-- Quick Action Buttons -->
+    <div class="quick-actions">
+        <div class="quick-action-btn" title="New Appointment">
+            <i class="bi bi-calendar-plus"></i>
         </div>
-
-        <!-- Today's Appointments -->
-        <div class="card mb-4">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Today's Appointments</h5>
-                <button class="btn btn-custom btn-sm" onclick="handleFeatureCardClick('appointments')">
-                    View All
-                </button>
-            </div>
-            <div class="card-body">
-                <div id="todayAppointmentsList">
-                    <!-- Appointments will be loaded here -->
-                </div>
-            </div>
+        <div class="quick-action-btn" title="Generate Report">
+            <i class="bi bi-file-medical"></i>
         </div>
-
-        <!-- Pending Reports -->
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Pending Reports</h5>
-                <button class="btn btn-custom btn-sm" onclick="handleFeatureCardClick('reports')">
-                    View All
-                </button>
-            </div>
-            <div class="card-body">
-                <div id="pendingReportsList">
-                    <!-- Pending reports will be loaded here -->
-                </div>
-            </div>
+        <div class="quick-action-btn" title="Emergency Contact">
+            <i class="bi bi-telephone"></i>
         </div>
     </div>
 
@@ -305,9 +658,113 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.41.0/dist/apexcharts.min.js"></script>
     <script src="auth.js"></script>
     <script src="dashboard-sync.js"></script>
     <script src="doctor-dashboard.js"></script>
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    <script>
+        // Initialize Charts
+        document.addEventListener('DOMContentLoaded', function() {
+            const options = {
+                series: [{
+                    name: 'Patient Visits',
+                    data: [65, 59, 80, 81, 56, 55, 70]
+                }],
+                chart: {
+                    height: 350,
+                    type: 'area',
+                    toolbar: {
+                        show: false
+                    },
+                    fontFamily: 'Poppins, sans-serif'
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                stroke: {
+                    curve: 'smooth',
+                    width: 3
+                },
+                colors: ['#667eea'],
+                fill: {
+                    type: 'gradient',
+                    gradient: {
+                        shadeIntensity: 1,
+                        opacityFrom: 0.7,
+                        opacityTo: 0.2,
+                        stops: [0, 90, 100]
+                    }
+                },
+                xaxis: {
+                    categories: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    labels: {
+                        style: {
+                            colors: '#666',
+                            fontSize: '12px',
+                            fontFamily: 'Poppins, sans-serif'
+                        }
+                    }
+                },
+                yaxis: {
+                    labels: {
+                        style: {
+                            colors: '#666',
+                            fontSize: '12px',
+                            fontFamily: 'Poppins, sans-serif'
+                        }
+                    }
+                },
+                tooltip: {
+                    theme: 'dark',
+                    x: {
+                        show: false
+                    }
+                }
+            };
+
+            const chart = new ApexCharts(document.querySelector("#patientStatistics"), options);
+            chart.render();
+
+            // Animate statistics
+            const animateValue = (element, start, end, duration) => {
+                let startTimestamp = null;
+                const step = (timestamp) => {
+                    if (!startTimestamp) startTimestamp = timestamp;
+                    const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                    const value = Math.floor(progress * (end - start) + start);
+                    element.textContent = value + (element.id === 'completionRate' ? '%' : '');
+                    if (progress < 1) {
+                        window.requestAnimationFrame(step);
+                    }
+                };
+                window.requestAnimationFrame(step);
+            };
+
+            // Animate all statistics
+            animateValue(document.getElementById('todayAppointments'), 0, 12, 2000);
+            animateValue(document.getElementById('pendingReports'), 0, 5, 2000);
+            animateValue(document.getElementById('totalPatients'), 0, 156, 2000);
+            animateValue(document.getElementById('completionRate'), 0, 92, 2000);
+        });
+
+        // Google Translate
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement(
+                {pageLanguage: 'en'},
+                'google_translate_element'
+            );
+        }
+
+        // Update greeting based on time of day
+        const updateGreeting = () => {
+            const hour = new Date().getHours();
+            const greetingText = document.getElementById('greetingText');
+            if (hour < 12) greetingText.textContent = 'Good Morning!';
+            else if (hour < 18) greetingText.textContent = 'Good Afternoon!';
+            else greetingText.textContent = 'Good Evening!';
+        };
+        updateGreeting();
+    </script>
 </body>
 </html>

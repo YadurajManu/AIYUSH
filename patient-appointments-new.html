@@ -11,6 +11,12 @@
         :root {
             --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             --secondary-gradient: linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%);
+            --success-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         .navbar {
@@ -23,6 +29,19 @@
             color: white;
             padding: 2rem 0;
             margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQ0MCIgaGVpZ2h0PSI1MDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMCAwaDE0NDB2NTAwSDB6IiBmaWxsPSIjRkZGIiBvcGFjaXR5PSIuMDUiLz48cGF0aCBkPSJNMTQ0MCA1MDBIMFYwaDcyMHoiIGZpbGw9IiNGRkYiIG9wYWNpdHk9Ii4wNSIvPjwvZz48L3N2Zz4=');
+            opacity: 0.1;
         }
 
         .appointment-card {
@@ -32,6 +51,7 @@
             margin-bottom: 1rem;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             border-left: 5px solid transparent;
+            overflow: hidden;
         }
 
         .appointment-card.pending {
@@ -40,6 +60,14 @@
 
         .appointment-card.confirmed {
             border-left-color: #28a745;
+        }
+
+        .appointment-card.cancelled {
+            border-left-color: #dc3545;
+        }
+
+        .appointment-card.completed {
+            border-left-color: #17a2b8;
         }
 
         .appointment-card:hover {
@@ -52,6 +80,7 @@
             border-radius: 15px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             margin-bottom: 2rem;
+            overflow: hidden;
         }
 
         .btn-custom {
@@ -73,6 +102,7 @@
             padding: 0.25rem 0.75rem;
             border-radius: 15px;
             font-size: 0.875rem;
+            display: inline-block;
         }
 
         .status-pending {
@@ -89,13 +119,106 @@
             background-color: #f8d7da;
             color: #721c24;
         }
+
+        .status-completed {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .stats-card {
+            border: none;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .stats-card h2 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 0.5rem 0;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .date-header {
+            background: var(--secondary-gradient);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 0;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: #ccc;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state h4 {
+            color: #6c757d;
+            margin-bottom: 1rem;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #dc3545;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        #google_translate_element {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+
+        .toast-container {
+            z-index: 9999;
+        }
+
+        .appointment-details-row {
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .appointment-details-row:last-child {
+            border-bottom: none;
+        }
     </style>
 </head>
 <body>
+    <div id="google_translate_element"></div>
+    
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
-            <a class="navbar-brand" href="patient-dashboard.html">
+            <a class="navbar-brand animate__animated animate__fadeIn" href="patient-dashboard.html">
                 <i class="bi bi-heart-pulse-fill me-2"></i>
                 AIयुष
             </a>
@@ -108,13 +231,17 @@
                         <a class="nav-link" href="patient-dashboard.html">Dashboard</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="patient-appointments.html">Appointments</a>
+                        <a class="nav-link active" href="patient-appointments-new.html">Appointments</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="patient-reports.html">Reports</a>
                     </li>
                 </ul>
                 <div class="d-flex align-items-center">
+                    <div class="position-relative me-4">
+                        <i class="bi bi-bell-fill text-light" style="font-size: 1.2rem;"></i>
+                        <span class="notification-badge">3</span>
+                    </div>
                     <span class="text-light me-3">Welcome, <span id="userDisplay"></span></span>
                     <button class="btn btn-outline-light" onclick="logout()">Logout</button>
                 </div>
@@ -127,10 +254,11 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-8">
-                    <h1>My Appointments</h1>
+                    <h1 class="display-4 mb-0">My Appointments</h1>
+                    <p class="lead mt-2">Manage all your medical appointments in one place</p>
                 </div>
                 <div class="col-md-4 text-md-end">
-                    <button class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#bookAppointmentModal">
+                    <button class="btn btn-custom" onclick="showBookAppointmentModal()">
                         <i class="bi bi-plus-circle me-2"></i>Book New Appointment
                     </button>
                 </div>
@@ -141,33 +269,37 @@
     <div class="container">
         <!-- Statistics -->
         <div class="row mb-4">
-            <div class="col-md-3">
-                <div class="card">
+            <div class="col-md-3 mb-3 mb-md-0">
+                <div class="stats-card">
                     <div class="card-body text-center">
+                        <i class="bi bi-calendar-check mb-2" style="font-size: 2rem; color: #667eea;"></i>
                         <h5>Total Appointments</h5>
                         <h2 id="totalAppointments">0</h2>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card">
+            <div class="col-md-3 mb-3 mb-md-0">
+                <div class="stats-card">
                     <div class="card-body text-center">
+                        <i class="bi bi-hourglass-split mb-2" style="font-size: 2rem; color: #ffc107;"></i>
                         <h5>Pending</h5>
                         <h2 id="pendingAppointments">0</h2>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card">
+            <div class="col-md-3 mb-3 mb-md-0">
+                <div class="stats-card">
                     <div class="card-body text-center">
+                        <i class="bi bi-check-circle mb-2" style="font-size: 2rem; color: #28a745;"></i>
                         <h5>Confirmed</h5>
                         <h2 id="confirmedAppointments">0</h2>
                     </div>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card">
+                <div class="stats-card">
                     <div class="card-body text-center">
+                        <i class="bi bi-x-circle mb-2" style="font-size: 2rem; color: #dc3545;"></i>
                         <h5>Cancelled</h5>
                         <h2 id="cancelledAppointments">0</h2>
                     </div>
@@ -181,18 +313,35 @@
                 <div class="card filter-card">
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-4 mb-3 mb-md-0">
                                 <label class="form-label">Filter by Status</label>
-                                <select class="form-select" id="appointmentFilter">
+                                <select class="form-select" id="statusFilter">
                                     <option value="all">All Appointments</option>
                                     <option value="pending">Pending</option>
                                     <option value="confirmed">Confirmed</option>
                                     <option value="cancelled">Cancelled</option>
+                                    <option value="completed">Completed</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 mb-3 mb-md-0">
+                                <label class="form-label">Filter by Test Type</label>
+                                <select class="form-select" id="testTypeFilter">
+                                    <option value="all">All Test Types</option>
+                                    <option value="Lung Cancer Detection">Lung Cancer Detection</option>
+                                    <option value="Brain Tumor Analysis">Brain Tumor Analysis</option>
+                                    <option value="Diabetic Retinopathy">Diabetic Retinopathy</option>
+                                    <option value="Osteoarthritis Detection">Osteoarthritis Detection</option>
+                                    <option value="Goiter Analysis">Goiter Analysis</option>
                                 </select>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Search</label>
-                                <input type="text" class="form-control" id="searchAppointments" placeholder="Search appointments...">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="searchInput" placeholder="Search appointments...">
+                                    <button class="btn btn-outline-secondary" type="button" id="clearSearch">
+                                        <i class="bi bi-x"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -201,8 +350,14 @@
         </div>
 
         <!-- Appointments List -->
-        <div id="appointmentsList" class="row mt-4">
+        <div id="appointmentsList" class="mt-4">
             <!-- Appointments will be dynamically added here -->
+            <div class="text-center py-4">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2">Loading your appointments...</p>
+            </div>
         </div>
     </div>
 
@@ -217,40 +372,33 @@
                 <div class="modal-body">
                     <form id="appointmentForm">
                         <div class="mb-3">
-                            <label class="form-label">Specialization</label>
-                            <select class="form-select" name="specialization" required>
-                                <option value="">Select Specialization</option>
-                                <option value="cardiology">Cardiology</option>
-                                <option value="dermatology">Dermatology</option>
-                                <option value="neurology">Neurology</option>
-                                <option value="orthopedics">Orthopedics</option>
-                                <option value="pediatrics">Pediatrics</option>
+                            <label class="form-label">Select Test Type</label>
+                            <select class="form-select" id="testType" required>
+                                <option value="">Choose test type...</option>
+                                <option value="Lung Cancer Detection">Lung Cancer Detection</option>
+                                <option value="Brain Tumor Analysis">Brain Tumor Analysis</option>
+                                <option value="Diabetic Retinopathy">Diabetic Retinopathy</option>
+                                <option value="Osteoarthritis Detection">Osteoarthritis Detection</option>
+                                <option value="Goiter Analysis">Goiter Analysis</option>
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Doctor</label>
-                            <select class="form-select" name="doctor" required>
-                                <option value="">Select Doctor</option>
-                                <option value="1">Dr. John Smith</option>
-                                <option value="2">Dr. Sarah Johnson</option>
-                                <option value="3">Dr. Michael Brown</option>
+                            <label class="form-label">Preferred Date</label>
+                            <input type="date" class="form-control" id="appointmentDate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Preferred Time</label>
+                            <select class="form-select" id="appointmentTime" required>
+                                <option value="">Choose time slot...</option>
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Date</label>
-                            <input type="date" class="form-control" name="date" required>
+                            <label class="form-label">Additional Notes</label>
+                            <textarea class="form-control" id="appointmentNotes" rows="3" placeholder="Any specific concerns or information for the doctor..."></textarea>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Time</label>
-                            <input type="time" class="form-control" name="time" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Symptoms/Reason</label>
-                            <textarea class="form-control" name="symptoms" rows="3" required></textarea>
-                        </div>
-                        <div class="text-end">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                            <button type="submit" class="btn btn-custom">Book Appointment</button>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Book Appointment</button>
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
                         </div>
                     </form>
                 </div>
@@ -260,7 +408,254 @@
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="appointment-manager.js"></script>
-    <script src="patient-appointments.js"></script>
+    <script src="auth.js"></script>
+    <script src="patient-dashboard.js"></script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    <script>
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement(
+                {pageLanguage: 'en'},
+                'google_translate_element'
+            );
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check authentication
+            const user = JSON.parse(sessionStorage.getItem('user'));
+            if (!user || user.role !== 'patient') {
+                window.location.replace('./login.html');
+                return;
+            }
+
+            // Display user name
+            document.getElementById('userDisplay').textContent = user.name;
+            
+            // Load appointments
+            loadAllAppointments();
+            
+            // Set up event listeners for filters
+            document.getElementById('statusFilter').addEventListener('change', filterAppointments);
+            document.getElementById('testTypeFilter').addEventListener('change', filterAppointments);
+            document.getElementById('searchInput').addEventListener('input', filterAppointments);
+            document.getElementById('clearSearch').addEventListener('click', clearSearch);
+            
+            // Add event listener for appointment form submission
+            const appointmentForm = document.getElementById('appointmentForm');
+            if (appointmentForm) {
+                appointmentForm.addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    bookAppointment();
+                });
+            }
+            
+            // Initialize appointment booking modal
+            initializeAppointmentModal();
+        });
+        
+        function loadAllAppointments() {
+            const appointments = JSON.parse(localStorage.getItem('appointments')) || [];
+            const user = JSON.parse(sessionStorage.getItem('user'));
+            
+            // Filter appointments for this patient
+            const userAppointments = appointments.filter(apt => 
+                apt.patientId === user.id
+            ).sort((a, b) => new Date(a.date + ' ' + a.time) - new Date(b.date + ' ' + b.time));
+            
+            // Update statistics
+            updateAppointmentStatistics(userAppointments);
+            
+            const container = document.getElementById('appointmentsList');
+            
+            if (userAppointments.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="bi bi-calendar-x"></i>
+                        <h4>No Appointments Found</h4>
+                        <p class="text-muted mb-4">You don't have any appointments scheduled yet.</p>
+                        <button class="btn btn-custom" onclick="showBookAppointmentModal()">
+                            Book Your First Appointment
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Group appointments by date
+            const appointmentsByDate = {};
+            userAppointments.forEach(apt => {
+                if (!appointmentsByDate[apt.date]) {
+                    appointmentsByDate[apt.date] = [];
+                }
+                appointmentsByDate[apt.date].push(apt);
+            });
+            
+            // Sort dates
+            const sortedDates = Object.keys(appointmentsByDate).sort((a, b) => new Date(a) - new Date(b));
+            
+            // Generate HTML for each date group
+            let html = '';
+            sortedDates.forEach(date => {
+                const aptsForDate = appointmentsByDate[date];
+                html += `
+                    <div class="date-group mb-4" data-date="${date}">
+                        <h6 class="date-header">${formatDate(date)}</h6>
+                        ${aptsForDate.map(apt => `
+                            <div class="appointment-card ${apt.status.toLowerCase()}" data-id="${apt.id}" data-status="${apt.status.toLowerCase()}" data-test-type="${apt.testType}">
+                                <div class="card-body">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-2">
+                                            <div class="text-center">
+                                                <h5 class="mb-0">${formatTime(apt.time)}</h5>
+                                                <small class="text-muted">${apt.testType}</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <h6 class="mb-0">${apt.doctor}</h6>
+                                            <small class="text-muted">${getDepartmentForDoctor(apt.doctor)}</small>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <span class="status-badge status-${apt.status.toLowerCase()}">
+                                                ${apt.status}
+                                            </span>
+                                        </div>
+                                        <div class="col-md-4 text-end">
+                                            ${apt.status === 'Pending' ? `
+                                                <button class="btn btn-sm btn-outline-danger me-2" onclick="cancelAppointment(event, '${apt.id}')">
+                                                    Cancel
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-primary" onclick="rescheduleAppointment(event, '${apt.id}')">
+                                                    Reschedule
+                                                </button>
+                                            ` : `
+                                                <button class="btn btn-sm btn-primary" onclick="viewAppointmentDetails('${apt.id}')">
+                                                    View Details
+                                                </button>
+                                            `}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+        
+        function updateAppointmentStatistics(appointments) {
+            const totalAppointments = appointments.length;
+            const pendingAppointments = appointments.filter(apt => apt.status === 'Pending').length;
+            const confirmedAppointments = appointments.filter(apt => apt.status === 'Confirmed').length;
+            const cancelledAppointments = appointments.filter(apt => apt.status === 'Cancelled').length;
+            
+            document.getElementById('totalAppointments').textContent = totalAppointments;
+            document.getElementById('pendingAppointments').textContent = pendingAppointments;
+            document.getElementById('confirmedAppointments').textContent = confirmedAppointments;
+            document.getElementById('cancelledAppointments').textContent = cancelledAppointments;
+            
+            // Animate numbers
+            animateStatNumbers();
+        }
+        
+        function animateStatNumbers() {
+            document.querySelectorAll('.stats-card h2').forEach(element => {
+                const target = parseInt(element.textContent);
+                let current = 0;
+                const increment = target / 20;
+                const interval = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        element.textContent = target;
+                        clearInterval(interval);
+                    } else {
+                        element.textContent = Math.round(current);
+                    }
+                }, 50);
+            });
+        }
+        
+        function filterAppointments() {
+            const statusFilter = document.getElementById('statusFilter').value;
+            const testTypeFilter = document.getElementById('testTypeFilter').value;
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            const appointmentCards = document.querySelectorAll('.appointment-card');
+            const dateGroups = document.querySelectorAll('.date-group');
+            
+            appointmentCards.forEach(card => {
+                const status = card.getAttribute('data-status');
+                const testType = card.getAttribute('data-test-type');
+                const cardText = card.textContent.toLowerCase();
+                
+                const statusMatch = statusFilter === 'all' || status === statusFilter;
+                const testTypeMatch = testTypeFilter === 'all' || testType === testTypeFilter;
+                const searchMatch = searchTerm === '' || cardText.includes(searchTerm);
+                
+                card.style.display = statusMatch && testTypeMatch && searchMatch ? 'block' : 'none';
+            });
+            
+            // Hide date groups with no visible appointments
+            dateGroups.forEach(group => {
+                const visibleAppointments = group.querySelectorAll('.appointment-card[style="display: block"]').length;
+                group.style.display = visibleAppointments > 0 ? 'block' : 'none';
+            });
+            
+            // Show empty state if no appointments are visible
+            const visibleGroups = document.querySelectorAll('.date-group[style="display: block"]').length;
+            const container = document.getElementById('appointmentsList');
+            
+            if (visibleGroups === 0) {
+                container.innerHTML += `
+                    <div class="empty-state" id="filterEmptyState">
+                        <i class="bi bi-filter-circle"></i>
+                        <h4>No Matching Appointments</h4>
+                        <p class="text-muted mb-4">No appointments match your current filters.</p>
+                        <button class="btn btn-outline-primary" onclick="clearFilters()">
+                            Clear Filters
+                        </button>
+                    </div>
+                `;
+            } else {
+                const emptyState = document.getElementById('filterEmptyState');
+                if (emptyState) emptyState.remove();
+            }
+        }
+        
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            filterAppointments();
+        }
+        
+        function clearFilters() {
+            document.getElementById('statusFilter').value = 'all';
+            document.getElementById('testTypeFilter').value = 'all';
+            document.getElementById('searchInput').value = '';
+            filterAppointments();
+        }
+        
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+        
+        function formatTime(timeStr) {
+            return new Date('2000-01-01 ' + timeStr).toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+        
+        function getDepartmentForDoctor(doctorName) {
+            const doctors = window.healthTechUsers?.doctors || [];
+            const doctor = doctors.find(d => d.name === doctorName);
+            return doctor ? doctor.department : 'General';
+        }
+    </script>
 </body>
 </html>
