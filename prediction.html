@@ -1,0 +1,2238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disease Prediction System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4285F4;
+            --secondary-color: #34A853;
+            --accent-color: #FBBC05;
+            --danger-color: #EA4335;
+            --light-bg: #F8F9FA;
+            --dark-text: #202124;
+            --light-text: #5F6368;
+            --border-radius: 8px;
+            --box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            --transition: all 0.2s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        header p {
+            color: var(--light-text);
+            font-size: 1rem;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: var(--transition);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+        }
+
+        .section-title i {
+            margin-right: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+            margin-bottom: 1rem;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.1);
+        }
+
+        .selected-symptoms {
+            background-color: rgba(52, 168, 83, 0.05);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(52, 168, 83, 0.1);
+        }
+
+        .selected-symptoms h3 {
+            font-size: 1rem;
+            margin-bottom: 0.8rem;
+            color: var(--secondary-color);
+            display: flex;
+            align-items: center;
+        }
+
+        .selected-symptoms h3 i {
+            margin-right: 0.5rem;
+        }
+
+        .symptom-tag {
+            display: inline-flex;
+            align-items: center;
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 0.4rem 0.8rem;
+            margin: 0.25rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .symptom-tag .remove-tag {
+            margin-left: 0.5rem;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .symptoms-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 0.6rem;
+            max-height: 350px;
+            overflow-y: auto;
+            padding: 0.5rem 0;
+            margin-bottom: 1.5rem;
+        }
+
+        .symptom-checkbox {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 0.8rem;
+            background-color: #f9f9f9;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .symptom-checkbox:hover {
+            background-color: rgba(66, 133, 244, 0.05);
+        }
+
+        .symptom-checkbox input[type="checkbox"] {
+            margin-right: 0.8rem;
+            accent-color: var(--primary-color);
+            width: 16px;
+            height: 16px;
+        }
+
+        .symptom-checkbox label {
+            cursor: pointer;
+            font-size: 0.9rem;
+            flex: 1;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .btn:hover {
+            background-color: #3367d6;
+            transform: translateY(-1px);
+        }
+
+        .btn i {
+            margin-right: 0.5rem;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .loading i {
+            font-size: 2rem;
+            color: var(--primary-color);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .result {
+            display: none;
+        }
+
+        .result-title {
+            font-size: 1.1rem;
+            margin-bottom: 1.2rem;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+        }
+
+        .result-title i {
+            margin-right: 0.5rem;
+        }
+
+        .disease-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 1.2rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--primary-color);
+            transition: var(--transition);
+            border: 1px solid rgba(0,0,0,0.05);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .disease-card:hover {
+            box-shadow: var(--box-shadow);
+        }
+
+        .disease-card .expand-icon {
+            position: absolute;
+            top: 1.2rem;
+            right: 1.2rem;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+            transition: var(--transition);
+        }
+
+        .disease-card.expanded .expand-icon {
+            transform: rotate(180deg);
+        }
+
+        .disease-name {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 0.8rem;
+            color: var(--dark-text);
+        }
+
+        .probability {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .probability-label {
+            font-weight: 500;
+            margin-right: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--light-text);
+        }
+
+        .probability-value {
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            margin-bottom: 0.8rem;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary-color);
+            border-radius: 4px;
+            transition: width 0.5s ease-out;
+        }
+
+        .matching-symptoms {
+            font-size: 0.85rem;
+            color: var(--light-text);
+        }
+
+        .matching-symptoms span {
+            font-weight: 500;
+            color: var(--dark-text);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 2rem;
+            color: var(--light-text);
+        }
+
+        .no-results i {
+            font-size: 3rem;
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            color: var(--light-text);
+            font-size: 0.85rem;
+        }
+
+        .no-symptoms-message {
+            color: var(--light-text);
+            font-size: 0.9rem;
+            padding: 0.5rem 0;
+        }
+
+        .disease-details {
+            display: none;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .disease-card.expanded .disease-details {
+            display: block;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .details-section {
+            margin-bottom: 1rem;
+        }
+
+        .details-section h4 {
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+            color: var(--dark-text);
+            display: flex;
+            align-items: center;
+        }
+
+        .details-section h4 i {
+            margin-right: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .details-section ul {
+            list-style-type: none;
+            padding-left: 1.5rem;
+        }
+
+        .details-section ul li {
+            font-size: 0.85rem;
+            margin-bottom: 0.3rem;
+            color: var(--light-text);
+            position: relative;
+        }
+
+        .details-section ul li::before {
+            content: "•";
+            color: var(--secondary-color);
+            position: absolute;
+            left: -1rem;
+        }
+
+        .details-section p {
+            font-size: 0.85rem;
+            color: var(--light-text);
+            line-height: 1.5;
+        }
+
+        .medical-resources {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .resource-link {
+            display: inline-flex;
+            align-items: center;
+            background-color: rgba(66, 133, 244, 0.1);
+            color: var(--primary-color);
+            text-decoration: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            transition: var(--transition);
+        }
+
+        .resource-link:hover {
+            background-color: rgba(66, 133, 244, 0.2);
+        }
+
+        .resource-link i {
+            margin-right: 0.4rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .symptoms-container {
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+                max-height: 300px;
+            }
+            
+            header h1 {
+                font-size: 1.8rem;
+            }
+        }
+
+        #diseaseInfoModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 1.5rem;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.2rem;
+            color: var(--light-text);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .close-modal:hover {
+            color: var(--danger-color);
+        }
+
+        .modal-header {
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Print Report Styles */
+        .print-btn {
+            display: inline-flex;
+            align-items: center;
+            background-color: var(--accent-color);
+            color: var(--dark-text);
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: var(--transition);
+            margin-left: 1rem;
+        }
+
+        .print-btn:hover {
+            background-color: #e8ae00;
+            transform: translateY(-1px);
+        }
+
+        .print-btn i {
+            margin-right: 0.5rem;
+        }
+
+        /* Patient Info Modal Styles */
+        #patientInfoModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .patient-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark-text);
+            font-size: 0.9rem;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.1);
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        .form-actions {
+            grid-column: span 2;
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .btn-secondary {
+            background-color: #f1f3f4;
+            color: var(--dark-text);
+        }
+
+        .btn-secondary:hover {
+            background-color: #e8eaed;
+        }
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            
+            #printReport, #printReport * {
+                visibility: visible;
+            }
+            
+            #printReport {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                padding: 20px;
+                background-color: white;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+            
+            @page {
+                size: A4;
+                margin: 0.5cm;
+            }
+            
+            .report-section {
+                page-break-inside: avoid;
+            }
+            
+            .report-header {
+                page-break-after: avoid;
+            }
+            
+            .timeline-visualization {
+                page-break-inside: avoid;
+            }
+        }
+
+        #printReport {
+            display: none;
+            background-color: white;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-top: 1.5rem;
+            font-family: 'Roboto', sans-serif;
+            color: var(--dark-text);
+            line-height: 1.6;
+            max-width: 210mm; /* A4 width */
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .report-watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 8rem;
+            color: rgba(0,0,0,0.03);
+            pointer-events: none;
+            z-index: 0;
+            white-space: nowrap;
+        }
+
+        .report-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--primary-color);
+            position: relative;
+        }
+
+        .report-title {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .report-subtitle {
+            font-size: 1.1rem;
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .report-date {
+            color: var(--light-text);
+            font-size: 0.9rem;
+        }
+
+        .report-section {
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .report-section-title {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+
+        .report-section-title i {
+            margin-right: 0.5rem;
+        }
+
+        .report-symptom-tag {
+            display: inline-block;
+            background-color: rgba(52, 168, 83, 0.1);
+            color: var(--secondary-color);
+            padding: 0.4rem 0.8rem;
+            margin: 0.3rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            border: 1px solid rgba(52, 168, 83, 0.2);
+            font-weight: 500;
+        }
+
+        .report-disease-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 1.2rem;
+            margin-bottom: 1.2rem;
+            border-left: 4px solid var(--primary-color);
+            border: 1px solid rgba(0,0,0,0.1);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .report-disease-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            color: var(--primary-color);
+        }
+
+        .report-probability {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+
+        .report-progress-bar {
+            height: 8px;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+
+        .report-progress-fill {
+            height: 100%;
+            background-color: var(--primary-color);
+            border-radius: 4px;
+        }
+
+        .report-disclaimer {
+            font-size: 0.85rem;
+            color: var(--light-text);
+            font-style: italic;
+            margin-top: 2rem;
+            padding: 1rem;
+            border: 1px dashed rgba(0,0,0,0.1);
+            border-radius: var(--border-radius);
+            background-color: rgba(0,0,0,0.02);
+        }
+
+        .report-qr {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .report-qr img {
+            max-width: 100px;
+            height: auto;
+            border: 1px solid rgba(0,0,0,0.1);
+            padding: 5px;
+            background-color: white;
+        }
+
+        .report-qr-text {
+            font-size: 0.8rem;
+            color: var(--light-text);
+            margin-top: 0.5rem;
+        }
+
+        .patient-info-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(66, 133, 244, 0.2);
+            border-radius: var(--border-radius);
+            padding: 1.2rem;
+            background-color: rgba(66, 133, 244, 0.05);
+        }
+
+        .patient-info-item {
+            margin-bottom: 0.8rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .patient-info-label {
+            font-weight: 500;
+            color: var(--primary-color);
+            font-size: 0.85rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .patient-info-value {
+            font-size: 1rem;
+            padding: 0.3rem 0;
+            border-bottom: 1px dotted rgba(0,0,0,0.1);
+        }
+
+        .report-logo {
+            max-width: 100px;
+            margin-bottom: 0.8rem;
+        }
+
+        .report-id {
+            font-size: 0.85rem;
+            color: var(--light-text);
+            margin-top: 0.5rem;
+            font-weight: 500;
+        }
+
+        .treatment-recommendations {
+            background-color: rgba(52, 168, 83, 0.05);
+            border-radius: var(--border-radius);
+            padding: 1.2rem;
+            border: 1px solid rgba(52, 168, 83, 0.2);
+            margin-top: 1.5rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .treatment-recommendations h4 {
+            color: var(--secondary-color);
+            margin-bottom: 0.8rem;
+            font-size: 1.1rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+
+        .treatment-recommendations h4 i {
+            margin-right: 0.5rem;
+        }
+
+        .treatment-recommendations ul {
+            padding-left: 1.8rem;
+        }
+
+        .treatment-recommendations li {
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+            position: relative;
+            padding-left: 0.3rem;
+        }
+
+        .treatment-recommendations li::marker {
+            color: var(--secondary-color);
+        }
+
+        /* Symptom Timeline Styles */
+        .timeline-container {
+            margin-top: 1.2rem;
+            border: 1px solid rgba(251, 188, 5, 0.3);
+            border-radius: var(--border-radius);
+            padding: 1.2rem;
+            background-color: rgba(251, 188, 5, 0.05);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .timeline-title {
+            font-weight: 500;
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            font-size: 1.1rem;
+        }
+
+        .timeline-title i {
+            margin-right: 0.5rem;
+        }
+
+        .report-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            border-top: 2px solid var(--primary-color);
+            padding-top: 1.2rem;
+        }
+
+        .report-signature {
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        .signature-line {
+            width: 200px;
+            border-bottom: 1px solid var(--dark-text);
+            margin: 0 auto;
+            margin-bottom: 0.5rem;
+        }
+
+        .signature-title {
+            font-size: 0.9rem;
+            color: var(--light-text);
+        }
+
+        .severity-indicator-label {
+            display: flex;
+            align-items: center;
+            margin-right: 1rem;
+            font-size: 0.85rem;
+        }
+
+        .severity-indicator-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        .severity-legend {
+            display: flex;
+            margin-top: 0.5rem;
+            justify-content: flex-end;
+        }
+
+        .report-prevention {
+            background-color: rgba(66, 133, 244, 0.05);
+            border-radius: var(--border-radius);
+            padding: 1.2rem;
+            border: 1px solid rgba(66, 133, 244, 0.2);
+            margin-top: 1.5rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .report-prevention h4 {
+            color: var(--primary-color);
+            margin-bottom: 0.8rem;
+            font-size: 1.1rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+
+        .report-prevention h4 i {
+            margin-right: 0.5rem;
+        }
+
+        .report-prevention ul {
+            padding-left: 1.8rem;
+        }
+
+        .report-prevention li {
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+            position: relative;
+            padding-left: 0.3rem;
+        }
+
+        .report-prevention li::marker {
+            color: var(--primary-color);
+        }
+
+        .report-alert {
+            background-color: rgba(234, 67, 53, 0.05);
+            border-radius: var(--border-radius);
+            padding: 1.2rem;
+            border: 1px solid rgba(234, 67, 53, 0.2);
+            margin-top: 1rem;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .report-alert i {
+            color: var(--danger-color);
+            font-size: 1.2rem;
+            margin-right: 0.8rem;
+            margin-top: 0.2rem;
+        }
+
+        .report-alert-content {
+            flex: 1;
+        }
+
+        .report-alert-title {
+            font-weight: 600;
+            color: var(--danger-color);
+            margin-bottom: 0.3rem;
+        }
+
+        .report-alert-text {
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Disease Prediction System</h1>
+            <p>Select your symptoms to get a preliminary diagnosis</p>
+        </header>
+        
+        <div class="card">
+            <div class="section-title">
+                <i class="fas fa-search"></i> Find Symptoms
+            </div>
+            <input type="text" 
+                   id="symptomSearch" 
+                   class="search-box" 
+                   placeholder="Type to search for symptoms...">
+                   
+            <div class="selected-symptoms" id="selectedSymptoms">
+                <h3><i class="fas fa-clipboard-list"></i> Selected Symptoms</h3>
+                <div id="selectedSymptomTags"></div>
+            </div>
+            
+            <div class="section-title">
+                <i class="fas fa-th-list"></i> Available Symptoms
+            </div>
+            <div class="symptoms-container" id="symptomsContainer">
+                <!-- Symptoms will be dynamically added here -->
+            </div>
+            
+            <button id="predictBtn" class="btn" onclick="predictDisease()">
+                <i class="fas fa-stethoscope"></i> Predict Disease
+            </button>
+        </div>
+
+        <div id="loading" class="loading">
+            <i class="fas fa-spinner"></i>
+            <p>Analyzing your symptoms...</p>
+        </div>
+
+        <div id="result" class="result card">
+            <!-- Results will be displayed here -->
+        </div>
+        
+        <!-- Printable Report Section -->
+        <div id="printReport">
+            <div class="report-watermark">MEDICAL REPORT</div>
+            <div class="report-header">
+                <div style="text-align: center;">
+                    <img id="reportLogo" class="report-logo" src="" alt="Medical Logo" style="display: none; margin: 0 auto;">
+                </div>
+                <h1 class="report-title">Medical Assessment Report</h1>
+                <p class="report-subtitle">Disease Prediction System</p>
+                <p class="report-date" id="reportDate"></p>
+                <p class="report-id" id="reportId"></p>
+            </div>
+            
+            <div class="report-section">
+                <h2 class="report-section-title"><i class="fas fa-user"></i> Patient Information</h2>
+                <div class="patient-info-section" id="reportPatientInfo">
+                    <!-- Patient info will be populated here -->
+                </div>
+            </div>
+            
+            <div class="report-section">
+                <h2 class="report-section-title"><i class="fas fa-clipboard-list"></i> Reported Symptoms</h2>
+                <div id="reportSymptoms"></div>
+                
+                <!-- Symptom Timeline Section -->
+                <div id="reportTimelineContainer" style="display: none;">
+                    <div class="report-timeline">
+                        <div class="timeline-container">
+                            <div class="timeline-header">
+                                <div class="timeline-title">
+                                    <i class="fas fa-calendar-alt"></i> Symptom Timeline
+                                </div>
+                            </div>
+                            <div id="reportTimelineItems">
+                                <!-- Timeline items will be added here -->
+                            </div>
+                            
+                            <div class="timeline-visualization">
+                                <h4 style="font-size: 1rem; margin-bottom: 0.8rem; color: var(--accent-color);"><i class="fas fa-chart-line"></i> Symptom Progression</h4>
+                                <div class="timeline-chart" id="timelineChart">
+                                    <!-- Timeline chart will be rendered here -->
+                                </div>
+                                <div class="timeline-dates" id="timelineDates">
+                                    <!-- Timeline dates will be added here -->
+                                </div>
+                                <div class="severity-legend">
+                                    <div class="severity-indicator-label">
+                                        <div class="severity-indicator-dot" style="background-color: #34A853;"></div>
+                                        <span>Mild</span>
+                                    </div>
+                                    <div class="severity-indicator-label">
+                                        <div class="severity-indicator-dot" style="background-color: #FBBC05;"></div>
+                                        <span>Moderate</span>
+                                    </div>
+                                    <div class="severity-indicator-label">
+                                        <div class="severity-indicator-dot" style="background-color: #EA4335;"></div>
+                                        <span>Severe</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="report-section">
+                <h2 class="report-section-title"><i class="fas fa-stethoscope"></i> Potential Diagnoses</h2>
+                <div id="reportDiagnoses"></div>
+            </div>
+            
+            <div class="report-section">
+                <h2 class="report-section-title"><i class="fas fa-notes-medical"></i> Primary Assessment</h2>
+                <div id="reportDetails"></div>
+                
+                <div class="treatment-recommendations" id="reportTreatments">
+                    <h4><i class="fas fa-medkit"></i> Treatment Recommendations</h4>
+                    <ul id="reportTreatmentsList">
+                        <!-- Treatment recommendations will be populated here -->
+                    </ul>
+                </div>
+                
+                <div class="report-prevention" id="reportPrevention">
+                    <h4><i class="fas fa-shield-alt"></i> Prevention Methods</h4>
+                    <ul id="reportPreventionList">
+                        <!-- Prevention methods will be populated here -->
+                    </ul>
+                </div>
+                
+                <div class="report-alert" id="reportAlert">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div class="report-alert-content">
+                        <div class="report-alert-title">When to Seek Medical Attention</div>
+                        <div class="report-alert-text" id="reportWhenToSeeDoctor">
+                            <!-- When to see doctor info will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="report-disclaimer">
+                <p><strong>Disclaimer:</strong> This report is generated by an automated system and is intended for informational purposes only. It does not constitute medical advice, diagnosis, or treatment. Please consult with a qualified healthcare provider for proper medical evaluation and care.</p>
+            </div>
+            
+            <div class="report-footer">
+                <div class="report-qr">
+                    <img id="reportQR" src="" alt="QR Code">
+                    <p class="report-qr-text">Scan to verify report</p>
+                </div>
+                <div style="text-align: right; font-size: 0.85rem; color: var(--light-text);">
+                    <p>Report generated by Disease Prediction System</p>
+                    <p id="reportTimestamp"></p>
+                </div>
+            </div>
+            
+            <div class="report-signature">
+                <div class="signature-line"></div>
+                <p class="signature-title">Healthcare Provider Signature</p>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Disclaimer: This tool provides preliminary information only and should not replace professional medical advice.</p>
+        </div>
+    </div>
+
+    <div id="diseaseInfoModal">
+        <div class="modal-content">
+            <div class="close-modal" onclick="closeDiseaseInfoModal()">&times;</div>
+            <div class="modal-header">
+                <h2 class="modal-title">Disease Information</h2>
+            </div>
+            <div class="disease-details">
+                <div class="details-section">
+                    <h4><i class="fas fa-info-circle"></i> Description</h4>
+                    <p id="diseaseDescription"></p>
+                </div>
+                <div class="details-section">
+                    <h4><i class="fas fa-medkit"></i> Common Treatments</h4>
+                    <ul id="diseaseTreatments"></ul>
+                </div>
+                <div class="details-section">
+                    <h4><i class="fas fa-shield-alt"></i> Prevention Methods</h4>
+                    <ul id="diseasePrevention"></ul>
+                </div>
+                <div class="details-section">
+                    <h4><i class="fas fa-user-md"></i> When to See a Doctor</h4>
+                    <p id="diseaseWhenToSeeDoctor"></p>
+                </div>
+                <div class="details-section">
+                    <h4><i class="fas fa-external-link-alt"></i> Medical Resources</h4>
+                    <div class="medical-resources">
+                        <a href="#" target="_blank" class="resource-link" id="diseaseResourceLink">
+                            <i class="fas fa-link"></i> View Resources
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Patient Information Modal -->
+    <div id="patientInfoModal">
+        <div class="modal-content">
+            <div class="close-modal" onclick="closePatientInfoModal()">&times;</div>
+            <div class="modal-header">
+                <h2 class="modal-title">Patient Information</h2>
+                <p>Please provide your details for the medical report</p>
+            </div>
+            <form id="patientInfoForm" onsubmit="return false;">
+                <div class="patient-form">
+                    <div class="form-group">
+                        <label for="patientName">Full Name*</label>
+                        <input type="text" id="patientName" required placeholder="Enter your full name">
+                    </div>
+                    <div class="form-group">
+                        <label for="patientAge">Age*</label>
+                        <input type="number" id="patientAge" required min="1" max="120" placeholder="Enter your age">
+                    </div>
+                    <div class="form-group">
+                        <label for="patientGender">Gender*</label>
+                        <select id="patientGender" required>
+                            <option value="">Select gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                            <option value="Prefer not to say">Prefer not to say</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="patientContact">Contact Number</label>
+                        <input type="tel" id="patientContact" placeholder="Enter your contact number">
+                    </div>
+                    <div class="form-group">
+                        <label for="patientEmail">Email</label>
+                        <input type="email" id="patientEmail" placeholder="Enter your email address">
+                    </div>
+                    <div class="form-group">
+                        <label for="patientBloodGroup">Blood Group</label>
+                        <select id="patientBloodGroup">
+                            <option value="">Select blood group (if known)</option>
+                            <option value="A+">A+</option>
+                            <option value="A-">A-</option>
+                            <option value="B+">B+</option>
+                            <option value="B-">B-</option>
+                            <option value="AB+">AB+</option>
+                            <option value="AB-">AB-</option>
+                            <option value="O+">O+</option>
+                            <option value="O-">O-</option>
+                            <option value="Unknown">Unknown</option>
+                        </select>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="patientNotes">Additional Notes (allergies, existing conditions, etc.)</label>
+                        <textarea id="patientNotes" rows="3" placeholder="Enter any relevant medical information"></textarea>
+                    </div>
+                    <div class="form-group full-width">
+                        <button type="button" class="btn" style="background-color: var(--accent-color); color: var(--dark-text);" onclick="showSymptomTimelineModal()">
+                            <i class="fas fa-calendar-alt"></i> Add Symptom Timeline
+                        </button>
+                        <p style="font-size: 0.85rem; color: var(--light-text); margin-top: 0.5rem;">
+                            Track when your symptoms started and how they've progressed over time
+                        </p>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closePatientInfoModal()">Cancel</button>
+                        <button type="button" class="btn" onclick="submitPatientInfo()">Generate Report</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Symptom Timeline Modal -->
+    <div id="symptomTimelineModal" class="symptom-timeline-modal">
+        <div class="modal-content">
+            <div class="close-modal" onclick="closeSymptomTimelineModal()">&times;</div>
+            <div class="modal-header">
+                <h2 class="modal-title">Symptom Timeline</h2>
+                <p>When did your symptoms start and how severe are they?</p>
+            </div>
+            <div class="timeline-form-container" id="timelineFormContainer">
+                <!-- Timeline form items will be added here dynamically -->
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeSymptomTimelineModal()">Cancel</button>
+                <button type="button" class="btn" onclick="saveSymptomTimeline()">Save Timeline</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include QR Code library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+    
+    <script>
+        const diseaseData = {
+            "Fungal infection": ["itching", "skin_rash", "nodal_skin_eruptions"],
+            "Allergy": ["continuous_sneezing", "shivering", "chills"],
+            "GERD": ["stomach_pain", "acidity", "ulcers_on_tongue"],
+            "Chronic cholestasis": ["itching", "vomiting", "yellowish_skin"],
+            "Drug Reaction": ["itching", "skin_rash", "stomach_pain"],
+            "Peptic ulcer disease": ["stomach_pain", "acidity", "vomiting"],
+            "AIDS": ["muscle_wasting", "patches_in_throat", "high_fever"],
+            "Diabetes": ["fatigue", "weight_loss", "restlessness", "lethargy", "irregular_sugar_level"],
+            "Gastroenteritis": ["vomiting", "sunken_eyes", "dehydration", "diarrhoea"],
+            "Bronchial Asthma": ["fatigue", "cough", "high_fever", "breathlessness"],
+            "Hypertension": ["headache", "chest_pain", "dizziness", "loss_of_balance"],
+            "Migraine": ["headache", "pain_behind_the_eyes", "neck_pain", "dizziness"],
+            "Cervical spondylosis": ["back_pain", "neck_pain", "dizziness"],
+            "Paralysis (brain hemorrhage)": ["weakness_in_limbs", "neck_pain", "dizziness", "loss_of_balance"],
+            "Jaundice": ["itching", "vomiting", "fatigue", "yellowish_skin", "dark_urine", "yellowing_of_eyes"],
+            "Malaria": ["chills", "vomiting", "high_fever", "sweating", "headache", "nausea"],
+            "Chicken pox": ["itching", "skin_rash", "fatigue", "lethargy", "high_fever", "red_spots_over_body"],
+            "Dengue": ["skin_rash", "chills", "joint_pain", "vomiting", "fatigue", "high_fever", "headache", "nausea"],
+            "Typhoid": ["chills", "vomiting", "fatigue", "high_fever", "headache", "nausea", "constipation"],
+            "Hepatitis A": ["joint_pain", "vomiting", "yellowish_skin", "dark_urine", "nausea", "loss_of_appetite", "abdominal_pain"],
+            "Hepatitis B": ["itching", "fatigue", "lethargy", "yellowish_skin", "dark_urine", "yellowing_of_eyes"],
+            "Hepatitis C": ["fatigue", "yellowish_skin", "nausea", "loss_of_appetite", "yellowing_of_eyes"],
+            "Hepatitis D": ["joint_pain", "vomiting", "fatigue", "yellowish_skin", "dark_urine", "nausea"],
+            "Hepatitis E": ["joint_pain", "vomiting", "fatigue", "high_fever", "yellowish_skin", "dark_urine", "nausea"],
+            "Alcoholic hepatitis": ["vomiting", "yellowish_skin", "abdominal_pain", "swelling_of_stomach", "distention_of_abdomen"],
+            "Tuberculosis": ["chills", "vomiting", "fatigue", "weight_loss", "cough", "high_fever", "breathlessness", "sweating"],
+            "Common Cold": ["continuous_sneezing", "chills", "fatigue", "cough", "high_fever", "headache", "swelled_lymph_nodes", "malaise", "phlegm", "throat_irritation", "redness_of_eyes", "sinus_pressure", "runny_nose", "congestion", "chest_pain", "loss_of_smell", "muscle_pain"],
+            "Pneumonia": ["chills", "fatigue", "cough", "high_fever", "breathlessness", "sweating", "chest_pain", "fast_heart_rate"],
+            "Heart attack": ["chest_pain", "breathlessness", "sweating", "vomiting"]
+        };
+
+        // Disease information database
+        const diseaseInfo = {
+            "Fungal infection": {
+                description: "A fungal infection is a condition where fungi invade and grow on or in the human body, affecting the skin, nails, hair, or internal organs.",
+                treatments: [
+                    "Topical antifungal creams (clotrimazole, miconazole)",
+                    "Oral antifungal medications for severe cases",
+                    "Keep affected areas clean and dry",
+                    "Use medicated shampoos for scalp infections"
+                ],
+                prevention: [
+                    "Maintain good personal hygiene",
+                    "Keep skin clean and dry, especially in skin folds",
+                    "Avoid sharing personal items like towels or combs",
+                    "Wear breathable fabrics and avoid tight clothing",
+                    "Change socks and underwear daily"
+                ],
+                when_to_see_doctor: "See a doctor if the infection persists after a week of self-treatment, spreads to other areas, becomes painful or severely itchy, or if you develop a fever.",
+                resources: [
+                    { name: "CDC - Fungal Infections", url: "https://www.cdc.gov/fungal/" },
+                    { name: "Mayo Clinic", url: "https://www.mayoclinic.org/diseases-conditions/fungal-infections/symptoms-causes/syc-20353402" },
+                    { name: "WebMD", url: "https://www.webmd.com/skin-problems-and-treatments/guide/fungal-infections-skin" }
+                ]
+            },
+            "Allergy": {
+                description: "An allergy is an immune system response to a foreign substance that's not typically harmful to your body, such as pollen, pet dander, or certain foods.",
+                treatments: [
+                    "Antihistamines to reduce symptoms",
+                    "Decongestants for nasal congestion",
+                    "Corticosteroids to reduce inflammation",
+                    "Avoidance of known allergens",
+                    "Immunotherapy (allergy shots) for long-term treatment"
+                ],
+                prevention: [
+                    "Identify and avoid known allergens",
+                    "Keep windows closed during high pollen seasons",
+                    "Use air purifiers with HEPA filters",
+                    "Regularly clean your home to reduce dust and pet dander",
+                    "Consider wearing a mask when doing yard work"
+                ],
+                when_to_see_doctor: "Consult a doctor if over-the-counter medications don't relieve symptoms, if allergies interfere with daily activities, or if you experience severe symptoms like difficulty breathing or swelling of the face, lips, or tongue.",
+                resources: [
+                    { name: "ACAAI", url: "https://acaai.org/allergies/" },
+                    { name: "AAAAI", url: "https://www.aaaai.org/conditions-treatments/allergies" },
+                    { name: "NIH", url: "https://www.niaid.nih.gov/diseases-conditions/allergic-diseases" }
+                ]
+            },
+            "GERD": {
+                description: "Gastroesophageal reflux disease (GERD) is a chronic digestive disorder that occurs when stomach acid flows back into the esophagus, irritating the lining.",
+                treatments: [
+                    "Antacids for mild symptoms",
+                    "H2 blockers to reduce acid production",
+                    "Proton pump inhibitors (PPIs) for more severe cases",
+                    "Lifestyle and dietary changes",
+                    "Surgery in severe cases that don't respond to medication"
+                ],
+                prevention: [
+                    "Maintain a healthy weight",
+                    "Avoid trigger foods (spicy, fatty, acidic)",
+                    "Eat smaller meals and avoid eating before bedtime",
+                    "Elevate the head of your bed",
+                    "Quit smoking and limit alcohol consumption"
+                ],
+                when_to_see_doctor: "See a doctor if you have persistent heartburn more than twice a week, difficulty swallowing, persistent nausea or vomiting, or if you're losing weight unintentionally.",
+                resources: [
+                    { name: "NIDDK", url: "https://www.niddk.nih.gov/health-information/digestive-diseases/acid-reflux-ger-gerd-adults" },
+                    { name: "American College of Gastroenterology", url: "https://gi.org/topics/acid-reflux/" },
+                    { name: "Mayo Clinic", url: "https://www.mayoclinic.org/diseases-conditions/gerd/symptoms-causes/syc-20361940" }
+                ]
+            },
+            "Diabetes": {
+                description: "Diabetes is a chronic condition that affects how your body turns food into energy, characterized by high blood sugar levels due to problems with insulin production or function.",
+                treatments: [
+                    "Regular blood sugar monitoring",
+                    "Insulin therapy for Type 1 and some Type 2 cases",
+                    "Oral medications to improve insulin sensitivity",
+                    "Healthy diet and regular exercise",
+                    "Weight management"
+                ],
+                prevention: [
+                    "Maintain a healthy weight",
+                    "Exercise regularly (at least 30 minutes, 5 days a week)",
+                    "Eat a balanced diet rich in fruits, vegetables, and whole grains",
+                    "Limit processed foods and added sugars",
+                    "Regular health screenings if you have risk factors"
+                ],
+                when_to_see_doctor: "Consult a doctor if you experience increased thirst and urination, unexplained weight loss, fatigue, blurred vision, slow-healing sores, or frequent infections.",
+                resources: [
+                    { name: "American Diabetes Association", url: "https://www.diabetes.org/" },
+                    { name: "CDC - Diabetes", url: "https://www.cdc.gov/diabetes/index.html" },
+                    { name: "NIDDK", url: "https://www.niddk.nih.gov/health-information/diabetes" }
+                ]
+            },
+            "Heart attack": {
+                description: "A heart attack occurs when blood flow to part of the heart is blocked, causing damage to the heart muscle. It's a medical emergency requiring immediate attention.",
+                treatments: [
+                    "Emergency medical care - call emergency services immediately",
+                    "Medications to dissolve clots and restore blood flow",
+                    "Surgical procedures like angioplasty or bypass surgery",
+                    "Cardiac rehabilitation programs",
+                    "Long-term medications to prevent future attacks"
+                ],
+                prevention: [
+                    "Maintain a heart-healthy diet low in saturated fats and sodium",
+                    "Exercise regularly",
+                    "Don't smoke and avoid secondhand smoke",
+                    "Control conditions like high blood pressure, high cholesterol, and diabetes",
+                    "Manage stress and get regular check-ups"
+                ],
+                when_to_see_doctor: "SEEK EMERGENCY CARE IMMEDIATELY if you experience chest pain/pressure, pain radiating to arm/jaw, shortness of breath, cold sweat, nausea, or lightheadedness. Every minute counts during a heart attack.",
+                resources: [
+                    { name: "American Heart Association", url: "https://www.heart.org/en/health-topics/heart-attack" },
+                    { name: "NIH - Heart Attack", url: "https://www.nhlbi.nih.gov/health-topics/heart-attack" },
+                    { name: "Mayo Clinic", url: "https://www.mayoclinic.org/diseases-conditions/heart-attack/symptoms-causes/syc-20373106" }
+                ]
+            }
+        };
+
+        // Add default information for diseases not explicitly defined
+        Object.keys(diseaseData).forEach(disease => {
+            if (!diseaseInfo[disease]) {
+                diseaseInfo[disease] = {
+                    description: `${disease} is a medical condition that should be properly diagnosed and treated by healthcare professionals.`,
+                    treatments: [
+                        "Consult with a healthcare provider for proper diagnosis and treatment",
+                        "Follow prescribed medication regimen",
+                        "Maintain a healthy lifestyle with proper nutrition and exercise",
+                        "Get adequate rest and manage stress"
+                    ],
+                    prevention: [
+                        "Practice good hygiene",
+                        "Maintain a balanced diet and regular exercise",
+                        "Get recommended vaccinations",
+                        "Avoid contact with infected individuals when possible",
+                        "Regular health check-ups"
+                    ],
+                    when_to_see_doctor: "Consult a healthcare provider if you experience persistent or worsening symptoms, high fever, severe pain, or if symptoms interfere with daily activities.",
+                    resources: [
+                        { name: "CDC", url: "https://www.cdc.gov/" },
+                        { name: "WHO", url: "https://www.who.int/" },
+                        { name: "Mayo Clinic", url: "https://www.mayoclinic.org/" }
+                    ]
+                };
+            }
+        });
+
+        const selectedSymptoms = new Set();
+        let symptomTimelineData = []; // Store symptom timeline data
+
+        function initializeSymptoms() {
+            const container = document.getElementById('symptomsContainer');
+            const uniqueSymptoms = new Set();
+            
+            Object.values(diseaseData).forEach(symptoms => {
+                symptoms.forEach(symptom => uniqueSymptoms.add(symptom));
+            });
+
+            Array.from(uniqueSymptoms).sort().forEach(symptom => {
+                const div = createSymptomCheckbox(symptom);
+                container.appendChild(div);
+            });
+        }
+
+        function createSymptomCheckbox(symptom) {
+            const div = document.createElement('div');
+            div.className = 'symptom-checkbox';
+            
+            const input = document.createElement('input');
+            input.type = 'checkbox';
+            input.id = symptom;
+            input.value = symptom;
+            input.onchange = () => toggleSymptom(symptom);
+
+            const label = document.createElement('label');
+            label.htmlFor = symptom;
+            label.textContent = symptom.replace(/_/g, ' ');
+
+            div.appendChild(input);
+            div.appendChild(label);
+            return div;
+        }
+
+        function toggleSymptom(symptom) {
+            if (selectedSymptoms.has(symptom)) {
+                selectedSymptoms.delete(symptom);
+            } else {
+                selectedSymptoms.add(symptom);
+            }
+            updateSelectedSymptomTags();
+        }
+
+        function updateSelectedSymptomTags() {
+            const container = document.getElementById('selectedSymptomTags');
+            container.innerHTML = '';
+            
+            if (selectedSymptoms.size === 0) {
+                container.innerHTML = '<p class="no-symptoms-message">No symptoms selected yet. Please select at least one symptom.</p>';
+                return;
+            }
+            
+            selectedSymptoms.forEach(symptom => {
+                const tag = document.createElement('span');
+                tag.className = 'symptom-tag';
+                tag.innerHTML = `${symptom.replace(/_/g, ' ')} <span class="remove-tag" onclick="removeSymptom('${symptom}')"><i class="fas fa-times"></i></span>`;
+                container.appendChild(tag);
+            });
+        }
+        
+        function removeSymptom(symptom) {
+            selectedSymptoms.delete(symptom);
+            document.getElementById(symptom).checked = false;
+            updateSelectedSymptomTags();
+        }
+
+        document.getElementById('symptomSearch').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const symptoms = document.getElementsByClassName('symptom-checkbox');
+            
+            Array.from(symptoms).forEach(symptom => {
+                const label = symptom.querySelector('label').textContent;
+                if (label.toLowerCase().includes(searchTerm)) {
+                    symptom.style.display = 'flex';
+                } else {
+                    symptom.style.display = 'none';
+                }
+            });
+        });
+
+        function predictDisease() {
+            if (selectedSymptoms.size === 0) {
+                alert('Please select at least one symptom');
+                return;
+            }
+
+            const loading = document.getElementById('loading');
+            const result = document.getElementById('result');
+            
+            loading.style.display = 'block';
+            result.style.display = 'none';
+
+            // Simulate loading time for better UX
+            setTimeout(() => {
+                const predictions = [];
+                const selectedSymptomsList = Array.from(selectedSymptoms);
+
+                for (const [disease, symptoms] of Object.entries(diseaseData)) {
+                    let matchingSymptoms = symptoms.filter(s => selectedSymptomsList.includes(s));
+                    if (matchingSymptoms.length > 0) {
+                        const probability = (matchingSymptoms.length / symptoms.length) * 100;
+                        predictions.push({
+                            disease,
+                            probability,
+                            matchingSymptoms
+                        });
+                    }
+                }
+
+                predictions.sort((a, b) => b.probability - a.probability);
+
+                result.innerHTML = '<div class="result-title"><i class="fas fa-chart-bar"></i> Prediction Results</div>';
+                
+                if (predictions.length > 0) {
+                    // Add print button
+                    result.innerHTML += `
+                        <button class="print-btn" onclick="showPatientInfoModal(${JSON.stringify(selectedSymptomsList).replace(/"/g, '&quot;')})">
+                            <i class="fas fa-file-pdf"></i> Generate Report
+                        </button>
+                    `;
+                    
+                    predictions.slice(0, 3).forEach(pred => {
+                        result.innerHTML += `
+                            <div class="disease-card" onclick="toggleDiseaseDetails(this, '${pred.disease}')">
+                                <div class="disease-name">${pred.disease}</div>
+                                <i class="fas fa-chevron-down expand-icon"></i>
+                                <div class="probability">
+                                    <span class="probability-label">Probability:</span>
+                                    <span class="probability-value">${pred.probability.toFixed(1)}%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: ${pred.probability}%"></div>
+                                </div>
+                                <div class="matching-symptoms">
+                                    <span>Matching Symptoms:</span> ${pred.matchingSymptoms.map(s => s.replace(/_/g, ' ')).join(', ')}
+                                </div>
+                                <div class="disease-details">
+                                    <div class="details-section">
+                                        <h4><i class="fas fa-info-circle"></i> Description</h4>
+                                        <p>${diseaseInfo[pred.disease].description}</p>
+                                    </div>
+                                    <div class="details-section">
+                                        <h4><i class="fas fa-medkit"></i> Common Treatments</h4>
+                                        <ul>
+                                            ${diseaseInfo[pred.disease].treatments.map(treatment => `<li>${treatment}</li>`).join('')}
+                                        </ul>
+                                    </div>
+                                    <div class="details-section">
+                                        <h4><i class="fas fa-shield-alt"></i> Prevention Methods</h4>
+                                        <ul>
+                                            ${diseaseInfo[pred.disease].prevention.map(method => `<li>${method}</li>`).join('')}
+                                        </ul>
+                                    </div>
+                                    <div class="details-section">
+                                        <h4><i class="fas fa-user-md"></i> When to See a Doctor</h4>
+                                        <p>${diseaseInfo[pred.disease].when_to_see_doctor}</p>
+                                    </div>
+                                    <div class="details-section">
+                                        <h4><i class="fas fa-external-link-alt"></i> Medical Resources</h4>
+                                        <div class="medical-resources">
+                                            ${diseaseInfo[pred.disease].resources.map(resource => 
+                                                `<a href="${resource.url}" target="_blank" class="resource-link">
+                                                    <i class="fas fa-link"></i> ${resource.name}
+                                                </a>`
+                                            ).join('')}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    result.innerHTML += `
+                        <div class="no-results">
+                            <i class="fas fa-search"></i>
+                            <p>No matching diseases found for the selected symptoms.</p>
+                            <p>Try selecting different or additional symptoms.</p>
+                        </div>
+                    `;
+                }
+
+                loading.style.display = 'none';
+                result.style.display = 'block';
+            }, 1000);
+        }
+
+        // Initialize the app
+        initializeSymptoms();
+        updateSelectedSymptomTags();
+
+        // Function to toggle disease details
+        function toggleDiseaseDetails(card, diseaseName) {
+            card.classList.toggle('expanded');
+            
+            // Close other expanded cards
+            const allCards = document.querySelectorAll('.disease-card');
+            allCards.forEach(otherCard => {
+                if (otherCard !== card && otherCard.classList.contains('expanded')) {
+                    otherCard.classList.remove('expanded');
+                }
+            });
+        }
+
+        function closeDiseaseInfoModal() {
+            document.getElementById('diseaseInfoModal').style.display = 'none';
+        }
+        
+        // Function to show patient information modal
+        function showPatientInfoModal(symptoms) {
+            // Store symptoms for later use
+            window.currentSymptoms = symptoms;
+            
+            // Reset form
+            document.getElementById('patientInfoForm').reset();
+            
+            // Show modal
+            const modal = document.getElementById('patientInfoModal');
+            modal.style.display = 'flex';
+        }
+        
+        // Function to close patient information modal
+        function closePatientInfoModal() {
+            document.getElementById('patientInfoModal').style.display = 'none';
+        }
+        
+        // Function to show symptom timeline modal
+        function showSymptomTimelineModal() {
+            // Get selected symptoms
+            const selectedSymptomsList = window.currentSymptoms;
+            if (!selectedSymptomsList || selectedSymptomsList.length === 0) {
+                alert('No symptoms selected. Please select symptoms first.');
+                return;
+            }
+            
+            // Create timeline form items
+            const container = document.getElementById('timelineFormContainer');
+            container.innerHTML = '';
+            
+            selectedSymptomsList.forEach(symptom => {
+                // Check if we already have data for this symptom
+                const existingData = symptomTimelineData.find(item => item.symptom === symptom);
+                
+                const formItem = document.createElement('div');
+                formItem.className = 'timeline-form-item';
+                
+                // Calculate date 7 days ago for default value
+                const defaultDate = new Date();
+                defaultDate.setDate(defaultDate.getDate() - 7);
+                const defaultDateStr = defaultDate.toISOString().split('T')[0];
+                
+                formItem.innerHTML = `
+                    <div class="timeline-form-symptom">${symptom.replace(/_/g, ' ')}</div>
+                    <div>
+                        <input type="date" id="date_${symptom}" class="symptom-date" 
+                               max="${new Date().toISOString().split('T')[0]}" 
+                               value="${existingData ? existingData.date : defaultDateStr}">
+                    </div>
+                    <div>
+                        <select id="severity_${symptom}" class="symptom-severity">
+                            <option value="mild" ${existingData && existingData.severity === 'mild' ? 'selected' : ''}>Mild</option>
+                            <option value="moderate" ${existingData && existingData.severity === 'moderate' ? 'selected' : ''}>Moderate</option>
+                            <option value="severe" ${existingData && existingData.severity === 'severe' ? 'selected' : ''}>Severe</option>
+                        </select>
+                    </div>
+                `;
+                
+                container.appendChild(formItem);
+            });
+            
+            // Show modal
+            document.getElementById('symptomTimelineModal').style.display = 'flex';
+        }
+        
+        // Function to close symptom timeline modal
+        function closeSymptomTimelineModal() {
+            document.getElementById('symptomTimelineModal').style.display = 'none';
+        }
+        
+        // Function to save symptom timeline
+        function saveSymptomTimeline() {
+            const selectedSymptomsList = window.currentSymptoms;
+            symptomTimelineData = [];
+            
+            selectedSymptomsList.forEach(symptom => {
+                const dateInput = document.getElementById(`date_${symptom}`);
+                const severityInput = document.getElementById(`severity_${symptom}`);
+                
+                if (dateInput && severityInput) {
+                    symptomTimelineData.push({
+                        symptom: symptom,
+                        date: dateInput.value,
+                        severity: severityInput.value
+                    });
+                }
+            });
+            
+            // Sort by date
+            symptomTimelineData.sort((a, b) => new Date(a.date) - new Date(b.date));
+            
+            // Close modal
+            closeSymptomTimelineModal();
+            
+            // Show confirmation
+            alert('Symptom timeline saved successfully!');
+        }
+        
+        // Function to add timeline to report
+        function addTimelineToReport() {
+            if (symptomTimelineData.length === 0) {
+                document.getElementById('reportTimelineContainer').style.display = 'none';
+                return;
+            }
+            
+            document.getElementById('reportTimelineContainer').style.display = 'block';
+            
+            // Add timeline items
+            const timelineItems = document.getElementById('reportTimelineItems');
+            timelineItems.innerHTML = '';
+            
+            // Create a table for better layout
+            const timelineTable = document.createElement('table');
+            timelineTable.style.width = '100%';
+            timelineTable.style.borderCollapse = 'collapse';
+            timelineTable.style.marginBottom = '1rem';
+            
+            // Add table header
+            const thead = document.createElement('thead');
+            thead.innerHTML = `
+                <tr style="border-bottom: 1px solid rgba(0,0,0,0.1); text-align: left;">
+                    <th style="padding: 0.5rem; font-weight: 500; color: var(--accent-color); width: 40%;">Symptom</th>
+                    <th style="padding: 0.5rem; font-weight: 500; color: var(--accent-color); width: 30%;">Onset Date</th>
+                    <th style="padding: 0.5rem; font-weight: 500; color: var(--accent-color); width: 30%;">Severity</th>
+                </tr>
+            `;
+            timelineTable.appendChild(thead);
+            
+            // Add table body
+            const tbody = document.createElement('tbody');
+            
+            symptomTimelineData.forEach(item => {
+                // Format date
+                const date = new Date(item.date);
+                const formattedDate = date.toLocaleDateString();
+                
+                // Set severity color
+                const severityColor = item.severity === 'mild' ? '#34A853' : 
+                                     item.severity === 'moderate' ? '#FBBC05' : '#EA4335';
+                
+                const tr = document.createElement('tr');
+                tr.style.borderBottom = '1px dashed rgba(0,0,0,0.05)';
+                
+                tr.innerHTML = `
+                    <td style="padding: 0.7rem 0.5rem; font-weight: 500;">${item.symptom.replace(/_/g, ' ')}</td>
+                    <td style="padding: 0.7rem 0.5rem; color: var(--light-text);">${formattedDate}</td>
+                    <td style="padding: 0.7rem 0.5rem;">
+                        <div style="display: flex; align-items: center;">
+                            <div style="width: 12px; height: 12px; border-radius: 50%; background-color: ${severityColor}; margin-right: 0.5rem;"></div>
+                            <span style="text-transform: capitalize;">${item.severity}</span>
+                        </div>
+                    </td>
+                `;
+                
+                tbody.appendChild(tr);
+            });
+            
+            timelineTable.appendChild(tbody);
+            timelineItems.appendChild(timelineTable);
+            
+            // Create timeline visualization
+            createTimelineVisualization();
+        }
+        
+        // Function to create timeline visualization
+        function createTimelineVisualization() {
+            if (symptomTimelineData.length === 0) return;
+            
+            const chart = document.getElementById('timelineChart');
+            const datesContainer = document.getElementById('timelineDates');
+            
+            chart.innerHTML = '';
+            datesContainer.innerHTML = '';
+            
+            // Set chart height based on number of symptoms
+            const symptomNames = [...new Set(symptomTimelineData.map(item => item.symptom))];
+            chart.style.height = `${Math.max(200, symptomNames.length * 40)}px`;
+            
+            // Get date range
+            const dates = symptomTimelineData.map(item => new Date(item.date));
+            const minDate = new Date(Math.min(...dates));
+            const maxDate = new Date();
+            
+            // Calculate total days in range
+            const totalDays = Math.ceil((maxDate - minDate) / (1000 * 60 * 60 * 24));
+            
+            // Create date markers
+            const dateMarkers = [];
+            for (let i = 0; i <= 4; i++) {
+                const markerDate = new Date(minDate);
+                markerDate.setDate(minDate.getDate() + Math.floor(totalDays * (i / 4)));
+                dateMarkers.push(markerDate);
+            }
+            
+            // Add date labels
+            dateMarkers.forEach(date => {
+                const dateLabel = document.createElement('div');
+                dateLabel.textContent = date.toLocaleDateString();
+                dateLabel.style.fontWeight = '500';
+                datesContainer.appendChild(dateLabel);
+            });
+            
+            // Add grid lines
+            for (let i = 0; i <= 4; i++) {
+                const gridLine = document.createElement('div');
+                gridLine.style.position = 'absolute';
+                gridLine.style.top = '0';
+                gridLine.style.bottom = '0';
+                gridLine.style.left = `${i * 25}%`;
+                gridLine.style.width = '1px';
+                gridLine.style.backgroundColor = 'rgba(0,0,0,0.05)';
+                gridLine.style.zIndex = '1';
+                chart.appendChild(gridLine);
+            }
+            
+            // Group symptoms by name
+            const symptomsMap = {};
+            symptomTimelineData.forEach(item => {
+                if (!symptomsMap[item.symptom]) {
+                    symptomsMap[item.symptom] = [];
+                }
+                symptomsMap[item.symptom].push(item);
+            });
+            
+            // Calculate vertical positions for each symptom
+            const verticalSpacing = chart.clientHeight / (symptomNames.length + 1);
+            
+            // Assign colors to symptoms
+            const colors = ['#4285F4', '#EA4335', '#34A853', '#FBBC05', '#8F44AD', '#E67E22', '#16A085'];
+            
+            // Draw timeline for each symptom
+            symptomNames.forEach((symptom, index) => {
+                const items = symptomsMap[symptom];
+                const yPosition = verticalSpacing * (index + 1);
+                const color = colors[index % colors.length];
+                
+                // Add symptom label
+                const label = document.createElement('div');
+                label.style.position = 'absolute';
+                label.style.left = '5px';
+                label.style.top = `${yPosition}px`;
+                label.style.transform = 'translateY(-50%)';
+                label.style.fontSize = '0.9rem';
+                label.style.color = color;
+                label.style.fontWeight = '500';
+                label.style.zIndex = '5';
+                label.textContent = symptom.replace(/_/g, ' ');
+                chart.appendChild(label);
+                
+                // Draw horizontal line for this symptom
+                const horizontalLine = document.createElement('div');
+                horizontalLine.style.position = 'absolute';
+                horizontalLine.style.left = '0';
+                horizontalLine.style.right = '0';
+                horizontalLine.style.top = `${yPosition}px`;
+                horizontalLine.style.height = '1px';
+                horizontalLine.style.backgroundColor = 'rgba(0,0,0,0.03)';
+                horizontalLine.style.zIndex = '2';
+                chart.appendChild(horizontalLine);
+                
+                // Draw points and lines
+                items.forEach((item, i) => {
+                    const itemDate = new Date(item.date);
+                    const daysSinceStart = Math.ceil((itemDate - minDate) / (1000 * 60 * 60 * 24));
+                    const xPercentage = (daysSinceStart / totalDays) * 100;
+                    
+                    // Create point
+                    const point = document.createElement('div');
+                    point.className = 'timeline-point';
+                    point.style.backgroundColor = color;
+                    point.style.left = `${xPercentage}%`;
+                    point.style.top = `${yPosition}px`;
+                    point.style.position = 'absolute';
+                    point.style.width = '10px';
+                    point.style.height = '10px';
+                    point.style.borderRadius = '50%';
+                    point.style.transform = 'translate(-50%, -50%)';
+                    point.style.zIndex = '10';
+                    point.style.boxShadow = '0 0 0 3px rgba(255,255,255,0.7)';
+                    
+                    // Size based on severity
+                    if (item.severity === 'moderate') {
+                        point.style.width = '12px';
+                        point.style.height = '12px';
+                    } else if (item.severity === 'severe') {
+                        point.style.width = '14px';
+                        point.style.height = '14px';
+                    }
+                    
+                    // Add tooltip
+                    point.title = `${symptom.replace(/_/g, ' ')}: ${new Date(item.date).toLocaleDateString()} - ${item.severity}`;
+                    
+                    chart.appendChild(point);
+                    
+                    // Draw line to next point if exists
+                    if (i < items.length - 1) {
+                        const nextItem = items[i + 1];
+                        const nextDate = new Date(nextItem.date);
+                        const nextDaysSinceStart = Math.ceil((nextDate - minDate) / (1000 * 60 * 60 * 24));
+                        const nextXPercentage = (nextDaysSinceStart / totalDays) * 100;
+                        
+                        const line = document.createElement('div');
+                        line.style.position = 'absolute';
+                        line.style.height = '2px';
+                        line.style.backgroundColor = color;
+                        line.style.left = `${xPercentage}%`;
+                        line.style.width = `${nextXPercentage - xPercentage}%`;
+                        line.style.top = `${yPosition}px`;
+                        line.style.transform = 'translateY(-50%)';
+                        line.style.zIndex = '5';
+                        
+                        chart.appendChild(line);
+                    }
+                });
+            });
+        }
+        
+        // Function to submit patient information and generate report
+        function submitPatientInfo() {
+            // Validate required fields
+            const name = document.getElementById('patientName').value;
+            const age = document.getElementById('patientAge').value;
+            const gender = document.getElementById('patientGender').value;
+            
+            if (!name || !age || !gender) {
+                alert('Please fill in all required fields (Name, Age, and Gender)');
+                return;
+            }
+            
+            // Collect patient information
+            const patientInfo = {
+                name: name,
+                age: age,
+                gender: gender,
+                contact: document.getElementById('patientContact').value,
+                email: document.getElementById('patientEmail').value,
+                bloodGroup: document.getElementById('patientBloodGroup').value,
+                notes: document.getElementById('patientNotes').value
+            };
+            
+            // Generate report with patient information
+            generatePrintableReport(window.currentSymptoms, patientInfo);
+            
+            // Close modal
+            closePatientInfoModal();
+        }
+        
+        // Function to generate printable report
+        function generatePrintableReport(symptoms, patientInfo) {
+            // Format current date
+            const now = new Date();
+            const formattedDate = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+            document.getElementById('reportDate').textContent = 'Generated on: ' + formattedDate;
+            document.getElementById('reportTimestamp').textContent = formattedDate;
+            
+            // Generate unique report ID
+            const reportId = 'RPT-' + now.getTime().toString().slice(-8) + '-' + Math.floor(Math.random() * 1000);
+            document.getElementById('reportId').textContent = 'Report ID: ' + reportId;
+            
+            // Create medical logo using SVG
+            const logoSvg = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80">
+                    <circle cx="40" cy="40" r="38" fill="white" stroke="${getComputedStyle(document.documentElement).getPropertyValue('--primary-color')}" stroke-width="2"/>
+                    <path d="M40 15 L40 65 M15 40 L65 40" stroke="${getComputedStyle(document.documentElement).getPropertyValue('--primary-color')}" stroke-width="4" stroke-linecap="round"/>
+                    <circle cx="40" cy="40" r="20" fill="none" stroke="${getComputedStyle(document.documentElement).getPropertyValue('--primary-color')}" stroke-width="2" stroke-dasharray="3,3"/>
+                </svg>
+            `;
+            
+            // Create a data URL from the SVG
+            const logoDataUrl = 'data:image/svg+xml;base64,' + btoa(logoSvg);
+            
+            // Add logo to report header
+            const logoContainer = document.getElementById('reportLogo');
+            if (logoContainer) {
+                logoContainer.src = logoDataUrl;
+                logoContainer.style.display = 'block';
+            }
+            
+            // Add patient information to report
+            const reportPatientInfo = document.getElementById('reportPatientInfo');
+            reportPatientInfo.innerHTML = `
+                <div class="patient-info-item">
+                    <div class="patient-info-label">Name:</div>
+                    <div class="patient-info-value">${patientInfo.name}</div>
+                </div>
+                <div class="patient-info-item">
+                    <div class="patient-info-label">Age:</div>
+                    <div class="patient-info-value">${patientInfo.age} years</div>
+                </div>
+                <div class="patient-info-item">
+                    <div class="patient-info-label">Gender:</div>
+                    <div class="patient-info-value">${patientInfo.gender}</div>
+                </div>
+                <div class="patient-info-item">
+                    <div class="patient-info-label">Contact:</div>
+                    <div class="patient-info-value">${patientInfo.contact || 'Not provided'}</div>
+                </div>
+                <div class="patient-info-item">
+                    <div class="patient-info-label">Email:</div>
+                    <div class="patient-info-value">${patientInfo.email || 'Not provided'}</div>
+                </div>
+                <div class="patient-info-item">
+                    <div class="patient-info-label">Blood Group:</div>
+                    <div class="patient-info-value">${patientInfo.bloodGroup || 'Not provided'}</div>
+                </div>
+            `;
+            
+            if (patientInfo.notes) {
+                reportPatientInfo.innerHTML += `
+                    <div class="patient-info-item" style="grid-column: span 2;">
+                        <div class="patient-info-label">Additional Notes:</div>
+                        <div class="patient-info-value">${patientInfo.notes}</div>
+                    </div>
+                `;
+            }
+            
+            // Add symptoms to report
+            const reportSymptoms = document.getElementById('reportSymptoms');
+            reportSymptoms.innerHTML = '';
+            
+            if (typeof symptoms === 'string') {
+                symptoms = JSON.parse(symptoms);
+            }
+            
+            symptoms.forEach(symptom => {
+                const tag = document.createElement('span');
+                tag.className = 'report-symptom-tag';
+                tag.textContent = symptom.replace(/_/g, ' ');
+                reportSymptoms.appendChild(tag);
+            });
+            
+            // Add timeline to report
+            addTimelineToReport();
+            
+            // Add diagnoses to report
+            const reportDiagnoses = document.getElementById('reportDiagnoses');
+            reportDiagnoses.innerHTML = '';
+            
+            // Get current predictions from the result
+            const predictions = [];
+            for (const [disease, diseaseSymptoms] of Object.entries(diseaseData)) {
+                let matchingSymptoms = diseaseSymptoms.filter(s => symptoms.includes(s));
+                if (matchingSymptoms.length > 0) {
+                    const probability = (matchingSymptoms.length / diseaseSymptoms.length) * 100;
+                    predictions.push({
+                        disease,
+                        probability,
+                        matchingSymptoms
+                    });
+                }
+            }
+            
+            predictions.sort((a, b) => b.probability - a.probability);
+            
+            if (predictions.length > 0) {
+                predictions.slice(0, 3).forEach((pred, index) => {
+                    const probabilityColor = index === 0 ? 'var(--primary-color)' : 
+                                           index === 1 ? 'var(--accent-color)' : 
+                                           'var(--light-text)';
+                    
+                    reportDiagnoses.innerHTML += `
+                        <div class="report-disease-card">
+                            <div class="report-disease-name">${pred.disease}</div>
+                            <div class="report-probability">
+                                <span class="probability-label">Probability:</span>
+                                <span class="probability-value" style="color: ${probabilityColor};">${pred.probability.toFixed(1)}%</span>
+                            </div>
+                            <div class="report-progress-bar">
+                                <div class="report-progress-fill" style="width: ${pred.probability}%; background-color: ${probabilityColor};"></div>
+                            </div>
+                            <div class="matching-symptoms">
+                                <span>Matching Symptoms:</span> ${pred.matchingSymptoms.map(s => s.replace(/_/g, ' ')).join(', ')}
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                reportDiagnoses.innerHTML = '<p>No matching diseases found for the selected symptoms.</p>';
+            }
+            
+            // Add detailed information
+            const reportDetails = document.getElementById('reportDetails');
+            reportDetails.innerHTML = '';
+            
+            const reportTreatmentsList = document.getElementById('reportTreatmentsList');
+            reportTreatmentsList.innerHTML = '';
+            
+            const reportPreventionList = document.getElementById('reportPreventionList');
+            reportPreventionList.innerHTML = '';
+            
+            const reportWhenToSeeDoctor = document.getElementById('reportWhenToSeeDoctor');
+            
+            if (predictions.length > 0) {
+                const topDisease = predictions[0].disease;
+                const diseaseDetail = diseaseInfo[topDisease];
+                
+                reportDetails.innerHTML += `
+                    <h3 style="font-size: 1.3rem; color: var(--primary-color); margin-bottom: 1rem;">${topDisease}</h3>
+                    <p style="margin-bottom: 1.2rem; line-height: 1.6;"><strong>Description:</strong> ${diseaseDetail.description}</p>
+                `;
+                
+                // Add treatment recommendations
+                diseaseDetail.treatments.forEach(treatment => {
+                    reportTreatmentsList.innerHTML += `<li>${treatment}</li>`;
+                });
+                
+                // Add prevention methods
+                diseaseDetail.prevention.forEach(prevention => {
+                    reportPreventionList.innerHTML += `<li>${prevention}</li>`;
+                });
+                
+                // Add when to see doctor
+                reportWhenToSeeDoctor.innerHTML = diseaseDetail.when_to_see_doctor;
+                
+                // Check if it's an emergency condition
+                if (diseaseDetail.when_to_see_doctor.includes("EMERGENCY") || 
+                    diseaseDetail.when_to_see_doctor.includes("immediately") ||
+                    diseaseDetail.when_to_see_doctor.includes("SEEK") ||
+                    topDisease === "Heart attack" ||
+                    topDisease === "Paralysis (brain hemorrhage)") {
+                    document.getElementById('reportAlert').style.backgroundColor = "rgba(234, 67, 53, 0.1)";
+                    document.getElementById('reportAlert').style.borderColor = "rgba(234, 67, 53, 0.3)";
+                }
+            }
+            
+            // Generate QR code with report data
+            const qrData = {
+                reportId: reportId,
+                date: formattedDate,
+                patientName: patientInfo.name,
+                patientAge: patientInfo.age,
+                symptoms: symptoms,
+                predictions: predictions.slice(0, 3).map(p => ({
+                    disease: p.disease,
+                    probability: p.probability.toFixed(1)
+                })),
+                timeline: symptomTimelineData
+            };
+            
+            const qrCode = qrcode(0, 'M');
+            qrCode.addData(JSON.stringify(qrData));
+            qrCode.make();
+            document.getElementById('reportQR').src = qrCode.createDataURL(4);
+            
+            // Display the report
+            document.getElementById('printReport').style.display = 'block';
+            
+            // Print the report
+            setTimeout(() => {
+                window.print();
+                document.getElementById('printReport').style.display = 'none';
+            }, 500);
+        }
+    </script>
+</body>
+</html> 

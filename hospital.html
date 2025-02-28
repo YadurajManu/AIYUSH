@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIयुष - Find the Best Hospitals</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="hospital.css">
+</head>
+<body>
+    <!-- Emergency Alert -->
+    <div class="emergency-alert">
+        <div class="emergency-alert-content">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>COVID-19 Emergency: Please wear masks and maintain social distancing</span>
+        </div>
+        <button class="emergency-alert-close">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-hospital-alt"></i>
+                <span>AIयुष</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="#hospitals" class="nav-link active">
+                    <i class="fas fa-hospital"></i>
+                    <span>Hospitals</span>
+                </a>
+                <a href="#emergency" class="nav-link">
+                    <i class="fas fa-ambulance"></i>
+                    <span>Emergency</span>
+                </a>
+                <a href="#doctors" class="nav-link">
+                    <i class="fas fa-user-md"></i>
+                    <span>Doctors</span>
+                </a>
+            </div>
+            <button class="contact-btn">
+                <i class="fas fa-phone-alt"></i>
+                <span>Contact Us</span>
+            </button>
+            <button class="menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">Find the Best Medical Care in Delhi</h1>
+            <p class="hero-subtitle">Discover top-rated hospitals and healthcare facilities near you, with real-time availability and instant appointment booking</p>
+            
+            <div class="search-container">
+                <div class="search-box">
+                    <div class="search-input-wrapper">
+                        <input type="text" placeholder="Search hospitals by name, location, or specialty..." id="hospitalSearch">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="search-filters">
+                        <select id="categoryFilter">
+                            <option value="all">All Categories</option>
+                            <option value="government">Government Hospital</option>
+                            <option value="private">Private Hospital</option>
+                            <option value="specialty">Specialty Clinic</option>
+                            <option value="emergency">Emergency Care</option>
+                        </select>
+                        <select id="ratingFilter">
+                            <option value="all">All Ratings</option>
+                            <option value="4.5">4.5+ Stars</option>
+                            <option value="4">4+ Stars</option>
+                            <option value="3.5">3.5+ Stars</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-container">
+                <div class="stat-card" data-aos="fade-up" data-aos-delay="100">
+                    <i class="fas fa-hospital-alt"></i>
+                    <h3>100+</h3>
+                    <p>Verified Hospitals</p>
+                </div>
+                <div class="stat-card" data-aos="fade-up" data-aos-delay="200">
+                    <i class="fas fa-user-md"></i>
+                    <h3>1000+</h3>
+                    <p>Expert Doctors</p>
+                </div>
+                <div class="stat-card" data-aos="fade-up" data-aos-delay="300">
+                    <i class="fas fa-users"></i>
+                    <h3>50k+</h3>
+                    <p>Happy Patients</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Hospitals Section -->
+    <section class="hospitals-section" id="hospitals">
+        <div class="section-header">
+            <h2>Featured Hospitals</h2>
+            <div class="view-controls">
+                <button class="view-btn active" data-view="grid">
+                    <i class="fas fa-th-large"></i>
+                </button>
+                <button class="view-btn" data-view="list">
+                    <i class="fas fa-list"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="hospitals-grid">
+            <!-- Hospital Cards will be dynamically added here -->
+        </div>
+    </section>
+
+    <!-- Map Section -->
+    <section class="map-section">
+        <div class="section-header">
+            <h2>Hospital Locations</h2>
+            <p>Find hospitals near you</p>
+        </div>
+        <div class="map-container">
+            <div id="map">
+                <div class="map-loader"></div>
+            </div>
+            <div class="map-sidebar">
+                <div class="sidebar-header">
+                    <div class="sidebar-filters">
+                        <button class="filter-btn active">All</button>
+                        <button class="filter-btn">Nearest</button>
+                        <button class="filter-btn">Top Rated</button>
+                    </div>
+                    <div class="sidebar-sort">
+                        <select class="sort-select">
+                            <option value="distance">Sort by Distance</option>
+                            <option value="rating">Sort by Rating</option>
+                            <option value="name">Sort by Name</option>
+                        </select>
+                        <i class="fas fa-chevron-down sort-icon"></i>
+                    </div>
+                </div>
+                <div class="hospital-list">
+                    <!-- Nearby hospitals will be dynamically added here -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-- Floating Emergency Button -->
+    <div class="floating-emergency">
+        <button class="emergency-fab" aria-label="Emergency Contact" onclick="showEmergencyContacts()">
+            <i class="fas fa-phone-alt"></i>
+        </button>
+    </div>
+
+    <!-- Emergency Quick Access Modal -->
+    <div class="emergency-modal" id="emergencyModal">
+        <div class="emergency-modal-content">
+            <div class="modal-header">
+                <h3>Quick Emergency Contacts</h3>
+                <button class="modal-close" onclick="closeEmergencyModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="quick-contacts">
+                    <button class="quick-contact-btn" onclick="callEmergency('102')">
+                        <i class="fas fa-ambulance"></i>
+                        <span>Ambulance</span>
+                        <span class="number">102</span>
+                    </button>
+                    <button class="quick-contact-btn" onclick="callEmergency('108')">
+                        <i class="fas fa-phone-alt"></i>
+                        <span>Helpline</span>
+                        <span class="number">108</span>
+                    </button>
+                    <button class="quick-contact-btn" onclick="callEmergency('1800111545')">
+                        <i class="fas fa-first-aid"></i>
+                        <span>Medical Help</span>
+                        <span class="number">1800-111-545</span>
+                    </button>
+                </div>
+                <div class="nearby-hospitals">
+                    <h4>Nearest Hospitals</h4>
+                    <div class="nearby-list">
+                        <!-- Will be populated dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About AIयुष</h3>
+                <p>We help you locate the best healthcare facilities in Delhi NCR. Our platform provides accurate information about hospitals, doctors, and emergency services.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="#hospitals">Hospitals</a></li>
+                    <li><a href="#emergency">Emergency</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Info</h3>
+                <p><i class="fas fa-envelope"></i> info@aiyush.com</p>
+                <p><i class="fas fa-phone"></i> +91 11-2222-3333</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 AIयुष. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="hospital.js"></script>
+
+    <!-- Hospital Card Template -->
+    <template id="hospital-card-template">
+        <div class="hospital-card" data-aos="fade-up">
+            <div class="card-image loading">
+                <img src="" alt="" onload="this.parentElement.classList.remove('loading')">
+                <div class="card-badge"></div>
+            </div>
+            <div class="card-content">
+                <div class="hospital-header">
+                    <h3 class="hospital-name"></h3>
+                    <div class="hospital-location">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span></span>
+                    </div>
+                </div>
+                
+                <div class="rating-container">
+                    <div class="rating-stars">
+                        <!-- Stars will be dynamically added -->
+                    </div>
+                    <div class="rating-info">
+                        <span class="rating-number"></span>
+                        <span class="rating-count"></span>
+                    </div>
+                </div>
+
+                <div class="hospital-features">
+                    <!-- Features will be dynamically added -->
+                </div>
+
+                <div class="hospital-stats">
+                    <div class="stat-item">
+                        <div class="stat-icon">
+                            <i class="fas fa-bed"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-label">Available Beds</div>
+                            <div class="stat-value"></div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon">
+                            <i class="fas fa-user-md"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-label">Doctors</div>
+                            <div class="stat-value"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-actions">
+                    <button class="card-btn primary">
+                        <i class="fas fa-calendar-alt"></i>
+                        Book Appointment
+                    </button>
+                    <button class="card-btn secondary">
+                        <i class="fas fa-info-circle"></i>
+                        View Details
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Map Popup Template -->
+    <template id="map-popup-template">
+        <div class="map-popup">
+            <h3>
+                <i class="fas fa-hospital-alt"></i>
+                <span></span>
+            </h3>
+            <div class="map-popup-content">
+                <div class="map-popup-image">
+                    <img src="" alt="">
+                </div>
+                <div class="map-popup-info">
+                    <p>
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span class="address"></span>
+                    </p>
+                    <p>
+                        <i class="fas fa-phone"></i>
+                        <span class="phone"></span>
+                    </p>
+                    <p>
+                        <i class="fas fa-star"></i>
+                        <span class="rating"></span>
+                    </p>
+                </div>
+            </div>
+            <div class="map-popup-actions">
+                <button class="map-popup-btn primary">
+                    <i class="fas fa-calendar-alt"></i>
+                    Book Now
+                </button>
+                <button class="map-popup-btn secondary">
+                    <i class="fas fa-info-circle"></i>
+                    Details
+                </button>
+            </div>
+        </div>
+    </template>
+</body>
+</html> 

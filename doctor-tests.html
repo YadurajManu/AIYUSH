@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Dashboard - AIयुष</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f4f6f9;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            color: #333;
+        }
+        .header {
+            background: linear-gradient(to right, #5a738e, #92a8d1);
+            color: white;
+            padding: 20px;
+            font-size: 32px;
+            font-weight: bold;
+            text-transform: uppercase;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+        }
+        .sub-header {
+            background: linear-gradient(to right, #a0b9d3, #d1e3f8);
+            color: #333;
+            padding: 14px;
+            font-size: 24px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            margin-bottom: 20px;
+            border-bottom-left-radius: 15px;
+            border-bottom-right-radius: 15px;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+        }
+        .card {
+		margin-top:20px;
+            background: linear-gradient(135deg, #dde5f0, #c4d3e9);
+            color: #333;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            font-size: 18px;
+            font-weight: bold;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 120px;
+        }
+        .card:hover {
+            background: linear-gradient(135deg, #c4d3e9, #a8c0de);
+            transform: translateY(-6px);
+            box-shadow: 6px 6px 18px rgba(0, 0, 0, 0.3);
+        }
+        .bottom-row {
+            grid-column: span 3;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        .card a {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">Disease Prediction</div>
+    <div class="container">
+        <div class="card"><a href="retina.html">Retinal Analysis</a></div>
+        <div class="card"><a href="arthritis.html">Arthritis Prediction</a></div>
+        <div class="card"><a href="goiter.html">Goiter Analysis</a></div>
+        <div class="bottom-row">
+            <div class="card"><a href="Brain-tumor.html">Brain Tumor Prediction</a></div>
+            <div class="card"><a href="lungCancer.html">Lung Cancer Prediction</a></div>
+			<div class="card"><a href="prediction.html">Disease Predictor</a></div>
+        </div>
+    </div>
+</body>
+</html>
