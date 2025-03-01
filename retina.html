@@ -6,6 +6,9 @@
     <title>Diabetic Retinopathy Analysis |AIयुष</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -145,6 +148,58 @@
                 padding: 1rem;
             }
         }
+
+        .modal-content {
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px 15px 0 0;
+            padding: 1.5rem;
+        }
+        
+        .form-floating {
+            margin-bottom: 1rem;
+        }
+        
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25);
+        }
+        
+        .generate-report-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .generate-report-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .report-preview {
+            background: white;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .report-success {
+            background: #d4edda;
+            color: #155724;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -198,10 +253,97 @@
                         for different stages of the condition.
                     </p>
                 </div>
+                
+                <div class="text-center mt-4">
+                    <button id="generateReportBtn" class="btn btn-custom btn-primary" disabled>
+                        <i class="bi bi-file-earmark-medical"></i> Generate Report
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
+    <div class="modal fade" id="patientInfoModal" tabindex="-1" aria-labelledby="patientInfoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="patientInfoModalLabel">
+                        <i class="bi bi-person-badge"></i> Patient Information
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="patientInfoForm">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="patientName" placeholder="Full Name" required>
+                            <label for="patientName">Full Name</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="number" class="form-control" id="patientAge" placeholder="Age" required min="1" max="120">
+                            <label for="patientAge">Age</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <select class="form-select" id="patientGender" required>
+                                <option value="" selected disabled>Select gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                            <label for="patientGender">Gender</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="patientId" placeholder="Patient ID">
+                            <label for="patientId">Patient ID (Optional)</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <textarea class="form-control" id="medicalHistory" placeholder="Medical History" style="height: 100px"></textarea>
+                            <label for="medicalHistory">Medical History (Optional)</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="doctorName" placeholder="Doctor's Name">
+                            <label for="doctorName">Doctor's Name</label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn generate-report-btn" id="confirmReportBtn">
+                        <i class="bi bi-file-earmark-pdf"></i> Generate PDF Report
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="reportPreviewModal" tabindex="-1" aria-labelledby="reportPreviewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="reportPreviewModalLabel">
+                        <i class="bi bi-file-earmark-text"></i> Report Generated Successfully
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="report-success">
+                        <i class="bi bi-check-circle-fill fs-1"></i>
+                        <h4 class="mt-2">Report Generated Successfully!</h4>
+                        <p>Your detailed medical report has been created and is ready for download.</p>
+                    </div>
+                    <div class="d-flex justify-content-center mt-3">
+                        <button type="button" class="btn generate-report-btn me-2" id="downloadReportBtn">
+                            <i class="bi bi-download"></i> Download Report
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                            <i class="bi bi-x-circle"></i> Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
     <script type="text/javascript">
@@ -209,6 +351,9 @@
 
         let model, webcam, labelContainer, maxPredictions;
         let webcamRunning = false;
+        let analysisResults = [];
+        let capturedImage = null;
+        let generatedPDF = null;
 
         // Load the model
         async function loadModel() {
@@ -258,8 +403,10 @@
                 ctx.drawImage(webcam.canvas, 0, 0, canvas.width, canvas.height);
 
                 document.getElementById("webcam-container").appendChild(canvas);
+                capturedImage = canvas.toDataURL('image/png');
 
                 const prediction = await model.predict(canvas);
+                analysisResults = prediction;
 
                 // Display predictions for all classes
                 labelContainer.innerHTML = ''; // Clear previous predictions
@@ -267,6 +414,9 @@
                     const classPrediction = `${p.className}: ${(p.probability * 100).toFixed(2)}%`;
                     labelContainer.innerHTML += `<div>${classPrediction}</div>`;
                 });
+                
+                // Enable the generate report button
+                document.getElementById('generateReportBtn').disabled = false;
             }
         }
 
@@ -291,6 +441,7 @@
                 reader.onload = async function (event) {
                     imageElement.src = event.target.result;
                     imageElement.style.display = "block";
+                    capturedImage = event.target.result;
 
                     // Ensure the image is resized for consistent predictions
                     const resizedCanvas = document.createElement("canvas");
@@ -304,6 +455,7 @@
 
                         // Predict using the resized canvas
                         const prediction = await model.predict(resizedCanvas);
+                        analysisResults = prediction;
 
                         // Display predictions for all classes
                         labelContainer.innerHTML = ''; // Clear previous predictions
@@ -311,14 +463,424 @@
                             const classPrediction = `${p.className}: ${(p.probability * 100).toFixed(2)}%`;
                             labelContainer.innerHTML += `<div>${classPrediction}</div>`;
                         });
+                        
+                        // Enable the generate report button
+                        document.getElementById('generateReportBtn').disabled = false;
                     };
                 };
                 reader.readAsDataURL(file);
             }
         }
 
+        // Generate PDF report
+        function generatePDFReport(patientInfo) {
+            // Initialize jsPDF
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Set document properties
+            doc.setProperties({
+                title: 'Diabetic Retinopathy Analysis Report',
+                subject: 'Medical Report',
+                author: 'AI-युष Medical System',
+                keywords: 'retinopathy, analysis, medical, report',
+                creator: 'AI-युष'
+            });
+            
+            // Add header with logo and gradient background
+            const gradient = [
+                [0, 102, 126, 234, 1],
+                [1, 118, 75, 162, 1]
+            ];
+            doc.setFillColor(102, 126, 234);
+            doc.rect(0, 0, 210, 40, 'F');
+            
+            // Add company logo/name
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(28);
+            doc.setFont('helvetica', 'bold');
+            doc.text('AI-युष', 105, 18, { align: 'center' });
+            doc.setFontSize(12);
+            doc.setFont('helvetica', 'normal');
+            doc.text('Advanced Healthcare Intelligence', 105, 25, { align: 'center' });
+            doc.setFontSize(18);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Diabetic Retinopathy Analysis Report', 105, 35, { align: 'center' });
+            
+            // Reset text color
+            doc.setTextColor(0, 0, 0);
+            
+            // Add report date and ID
+            const today = new Date();
+            const formattedDate = today.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            const formattedTime = today.toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            // Add report metadata section with light background
+            doc.setFillColor(240, 240, 250);
+            doc.rect(0, 40, 210, 15, 'F');
+            
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'normal');
+            doc.text(`Report Date: ${formattedDate} at ${formattedTime}`, 15, 47);
+            const reportId = `RPT-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}-${today.getFullYear()}`;
+            doc.text(`Report ID: ${reportId}`, 140, 47);
+            doc.text(`Generated by: AI-युष Diagnostic System v2.1`, 15, 52);
+            
+            // Add patient information section
+            doc.setFontSize(14);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(102, 126, 234);
+            doc.text('PATIENT INFORMATION', 15, 65);
+            doc.line(15, 67, 195, 67);
+            doc.setTextColor(0, 0, 0);
+            
+            // Create patient info table
+            doc.autoTable({
+                startY: 70,
+                theme: 'grid',
+                headStyles: {
+                    fillColor: [102, 126, 234],
+                    textColor: [255, 255, 255],
+                    fontStyle: 'bold'
+                },
+                body: [
+                    ['Full Name', patientInfo.name],
+                    ['Age', patientInfo.age + ' years'],
+                    ['Gender', patientInfo.gender],
+                    ['Patient ID', patientInfo.id || 'Not provided'],
+                    ['Examination Date', formattedDate]
+                ],
+                styles: {
+                    cellPadding: 4,
+                },
+                columnStyles: {
+                    0: {
+                        fontStyle: 'bold',
+                        cellWidth: 40,
+                        fillColor: [240, 240, 250]
+                    }
+                }
+            });
+            
+            // Add medical history if provided
+            if (patientInfo.medicalHistory) {
+                const historyY = doc.lastAutoTable.finalY + 10;
+                doc.setFontSize(14);
+                doc.setFont('helvetica', 'bold');
+                doc.setTextColor(102, 126, 234);
+                doc.text('MEDICAL HISTORY', 15, historyY);
+                doc.line(15, historyY + 2, 195, historyY + 2);
+                doc.setTextColor(0, 0, 0);
+                
+                // Add background for medical history
+                doc.setFillColor(248, 248, 252);
+                doc.rect(15, historyY + 5, 180, 20, 'F');
+                
+                doc.setFontSize(11);
+                doc.setFont('helvetica', 'normal');
+                const splitHistory = doc.splitTextToSize(patientInfo.medicalHistory, 170);
+                doc.text(splitHistory, 20, historyY + 12);
+            }
+            
+            // Add image section
+            const imageY = patientInfo.medicalHistory ? 
+                doc.lastAutoTable.finalY + 30 : 
+                doc.lastAutoTable.finalY + 15;
+                
+            doc.setFontSize(14);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(102, 126, 234);
+            doc.text('RETINAL IMAGE ANALYSIS', 15, imageY);
+            doc.line(15, imageY + 2, 195, imageY + 2);
+            doc.setTextColor(0, 0, 0);
+            
+            // Add the captured image with border and shadow effect
+            if (capturedImage) {
+                // Add light background for image
+                doc.setFillColor(248, 248, 252);
+                doc.roundedRect(55, imageY + 5, 100, 85, 3, 3, 'F');
+                
+                // Add image border
+                doc.setDrawColor(102, 126, 234);
+                doc.setLineWidth(0.5);
+                doc.roundedRect(60, imageY + 10, 90, 75, 2, 2, 'S');
+                
+                // Add the image
+                doc.addImage(capturedImage, 'PNG', 65, imageY + 15, 80, 65);
+                
+                // Add caption
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'italic');
+                doc.setTextColor(100, 100, 100);
+                doc.text('Analyzed Retinal Image', 105, imageY + 90, { align: 'center' });
+            }
+            
+            // Add analysis results
+            const resultsY = imageY + 95;
+            doc.setFontSize(14);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(102, 126, 234);
+            doc.text('DIAGNOSTIC RESULTS', 15, resultsY);
+            doc.line(15, resultsY + 2, 195, resultsY + 2);
+            doc.setTextColor(0, 0, 0);
+            
+            // Create table for results
+            const tableData = [];
+            analysisResults.forEach(result => {
+                const probability = (result.probability * 100).toFixed(2);
+                let confidenceLevel = probability > 80 ? 'High' : 
+                                     probability > 50 ? 'Medium' : 'Low';
+                
+                // Add confidence indicator symbol
+                if (confidenceLevel === 'High') {
+                    confidenceLevel = '● High';
+                } else if (confidenceLevel === 'Medium') {
+                    confidenceLevel = '◐ Medium';
+                } else {
+                    confidenceLevel = '○ Low';
+                }
+                                     
+                tableData.push([
+                    result.className, 
+                    `${probability}%`,
+                    confidenceLevel
+                ]);
+            });
+            
+            // Sort results by probability (highest first)
+            tableData.sort((a, b) => parseFloat(b[1]) - parseFloat(a[1]));
+            
+            doc.autoTable({
+                startY: resultsY + 7,
+                head: [['Classification', 'Probability', 'Confidence Level']],
+                body: tableData,
+                theme: 'grid',
+                headStyles: {
+                    fillColor: [102, 126, 234],
+                    textColor: [255, 255, 255],
+                    fontStyle: 'bold'
+                },
+                alternateRowStyles: {
+                    fillColor: [240, 240, 250]
+                },
+                columnStyles: {
+                    0: { cellWidth: 80 },
+                    1: { cellWidth: 40, halign: 'center' },
+                    2: { cellWidth: 40, halign: 'center' }
+                }
+            });
+            
+            // Add interpretation
+            let highestProb = 0;
+            let diagnosis = '';
+            
+            analysisResults.forEach(result => {
+                if (result.probability > highestProb) {
+                    highestProb = result.probability;
+                    diagnosis = result.className;
+                }
+            });
+            
+            // Add a new page if needed
+            if (doc.lastAutoTable.finalY > 230) {
+                doc.addPage();
+                
+                // Add header to new page
+                doc.setFillColor(102, 126, 234);
+                doc.rect(0, 0, 20, 'F');
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(14);
+                doc.setFont('helvetica', 'bold');
+                doc.text('AI-युष Medical Report - Continued', 105, 12, { align: 'center' });
+                doc.setTextColor(0, 0, 0);
+                
+                // Reset Y position for interpretation
+                var interpretationY = 30;
+            } else {
+                var interpretationY = doc.lastAutoTable.finalY + 15;
+            }
+            
+            doc.setFontSize(14);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(102, 126, 234);
+            doc.text('CLINICAL INTERPRETATION', 15, interpretationY);
+            doc.line(15, interpretationY + 2, 195, interpretationY + 2);
+            doc.setTextColor(0, 0, 0);
+            
+            // Add background for interpretation
+            doc.setFillColor(248, 248, 252);
+            doc.rect(15, interpretationY + 5, 180, 30, 'F');
+            
+            doc.setFontSize(11);
+            doc.setFont('helvetica', 'normal');
+            let interpretationText = `Based on the AI-powered analysis, the retinal image shows highest probability (${(highestProb * 100).toFixed(2)}%) `;
+            interpretationText += `for classification: ${diagnosis}. `;
+            
+            // Add detailed interpretation based on diagnosis
+            if (diagnosis.toLowerCase().includes('normal') || diagnosis.toLowerCase().includes('no_dr')) {
+                interpretationText += 'No signs of diabetic retinopathy were detected in this scan. ';
+                interpretationText += 'The retinal vasculature appears within normal limits with no evidence of microaneurysms, hemorrhages, exudates, or neovascularization. ';
+                interpretationText += 'Regular follow-up examinations are recommended as per standard diabetic care protocols.';
+            } else if (diagnosis.toLowerCase().includes('mild') || diagnosis.toLowerCase().includes('moderate')) {
+                interpretationText += 'Signs of early to moderate diabetic retinopathy were detected. ';
+                interpretationText += 'The analysis indicates the presence of microaneurysms and possibly small hemorrhages. ';
+                interpretationText += 'Clinical correlation and follow-up with an ophthalmologist is recommended within 3-6 months. ';
+                interpretationText += 'Strict glycemic control and management of other risk factors is advised.';
+            } else if (diagnosis.toLowerCase().includes('severe') || diagnosis.toLowerCase().includes('proliferative')) {
+                interpretationText += 'Signs of advanced diabetic retinopathy were detected. ';
+                interpretationText += 'The analysis suggests the presence of significant retinal abnormalities that may include multiple hemorrhages, exudates, and possible neovascularization. ';
+                interpretationText += 'Urgent referral to an ophthalmologist is strongly recommended. ';
+                interpretationText += 'This condition may require prompt intervention to prevent vision loss.';
+            } else {
+                interpretationText += 'The analysis indicates potential retinal abnormalities. ';
+                interpretationText += 'Clinical correlation is recommended to confirm the findings and determine appropriate management. ';
+                interpretationText += 'Follow-up with an ophthalmologist is advised.';
+            }
+            
+            const splitInterpretation = doc.splitTextToSize(interpretationText, 170);
+            doc.text(splitInterpretation, 20, interpretationY + 12);
+            
+            // Add recommendations
+            const recommendationsY = interpretationY + splitInterpretation.length * 5 + 15;
+            doc.setFontSize(14);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(102, 126, 234);
+            doc.text('RECOMMENDATIONS', 15, recommendationsY);
+            doc.line(15, recommendationsY + 2, 195, recommendationsY + 2);
+            doc.setTextColor(0, 0, 0);
+            
+            // Add background for recommendations
+            doc.setFillColor(248, 248, 252);
+            doc.roundedRect(15, recommendationsY + 5, 180, 35, 3, 3, 'F');
+            
+            doc.setFontSize(11);
+            doc.setFont('helvetica', 'normal');
+            let recommendationsText = '';
+            
+            if (diagnosis.toLowerCase().includes('normal') || diagnosis.toLowerCase().includes('no_dr')) {
+                recommendationsText = '1. Continue routine diabetic eye screening annually.\n';
+                recommendationsText += '2. Maintain good glycemic control (HbA1c < 7.0%).\n';
+                recommendationsText += '3. Regular monitoring of blood pressure and lipid profile.\n';
+                recommendationsText += '4. Report any changes in vision promptly.';
+            } else if (diagnosis.toLowerCase().includes('mild') || diagnosis.toLowerCase().includes('moderate')) {
+                recommendationsText = '1. Ophthalmology follow-up within 3-6 months.\n';
+                recommendationsText += '2. Optimize glycemic control (target HbA1c < 7.0%).\n';
+                recommendationsText += '3. Blood pressure management (target < 130/80 mmHg).\n';
+                recommendationsText += '4. Consider additional retinal imaging (OCT, fluorescein angiography).\n';
+                recommendationsText += '5. Monitor for any changes in visual acuity.';
+            } else {
+                recommendationsText = '1. Urgent ophthalmology referral (within 1-2 weeks).\n';
+                recommendationsText += '2. Potential need for laser photocoagulation or other interventions.\n';
+                recommendationsText += '3. Strict glycemic control with endocrinology input.\n';
+                recommendationsText += '4. Aggressive management of all cardiovascular risk factors.\n';
+                recommendationsText += '5. Frequent monitoring of retinal status and visual acuity.';
+            }
+            
+            doc.text(recommendationsText, 20, recommendationsY + 12);
+            
+            // Add doctor information
+            const doctorY = recommendationsY + 45;
+            doc.setFontSize(14);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(102, 126, 234);
+            doc.text('PHYSICIAN INFORMATION', 15, doctorY);
+            doc.line(15, doctorY + 2, 195, doctorY + 2);
+            doc.setTextColor(0, 0, 0);
+            
+            // Add physician info box
+            doc.setFillColor(248, 248, 252);
+            doc.roundedRect(15, doctorY + 5, 180, 30, 3, 3, 'F');
+            
+            doc.setFontSize(11);
+            doc.setFont('helvetica', 'normal');
+            doc.text(`Attending Physician: ${patientInfo.doctorName || 'Not specified'}`, 20, doctorY + 15);
+            
+            // Add signature area
+            doc.text('Physician Signature: _______________________________', 20, doctorY + 25);
+            doc.text('Date: _________________', 20, doctorY + 32);
+            
+            // Add disclaimer
+            doc.setFillColor(245, 245, 245);
+            doc.rect(0, 260, 210, 25, 'F');
+            
+            doc.setFontSize(8);
+            doc.setFont('helvetica', 'italic');
+            doc.setTextColor(100, 100, 100);
+            const disclaimerText = 'DISCLAIMER: This report was generated using an AI-based analysis system and should be used for informational purposes only. It is not a substitute for professional medical advice, diagnosis, or treatment. The AI system has been trained on clinical data, but may not capture all aspects of retinal pathology. Always seek the advice of your physician or other qualified health provider with any questions you may have regarding a medical condition. AI-युष and its affiliated systems are not responsible for any actions taken based solely on this automated analysis.';
+            const splitDisclaimer = doc.splitTextToSize(disclaimerText, 180);
+            doc.text(splitDisclaimer, 15, 265);
+            
+            // Add footer
+            doc.setFillColor(102, 126, 234);
+            doc.rect(0, 285, 210, 12, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'bold');
+            doc.text('AI-युष Medical System - Powered by Advanced AI Technology', 105, 292, { align: 'center' });
+            doc.setFontSize(8);
+            doc.setFont('helvetica', 'normal');
+            doc.text(`Report ID: ${reportId} | Page 1 of 1`, 105, 296, { align: 'center' });
+            
+            // Save the PDF
+            return doc;
+        }
+
         // Load the model initially
         loadModel();
+        
+        // Add event listeners for report generation
+        document.addEventListener('DOMContentLoaded', function() {
+            const generateReportBtn = document.getElementById('generateReportBtn');
+            const patientInfoModal = new bootstrap.Modal(document.getElementById('patientInfoModal'));
+            const reportPreviewModal = new bootstrap.Modal(document.getElementById('reportPreviewModal'));
+            const confirmReportBtn = document.getElementById('confirmReportBtn');
+            const downloadReportBtn = document.getElementById('downloadReportBtn');
+            
+            // Show patient info modal when generate report button is clicked
+            generateReportBtn.addEventListener('click', function() {
+                patientInfoModal.show();
+            });
+            
+            // Generate PDF when confirm button is clicked
+            confirmReportBtn.addEventListener('click', function() {
+                // Get patient information from form
+                const patientInfo = {
+                    name: document.getElementById('patientName').value,
+                    age: document.getElementById('patientAge').value,
+                    gender: document.getElementById('patientGender').value,
+                    id: document.getElementById('patientId').value,
+                    medicalHistory: document.getElementById('medicalHistory').value,
+                    doctorName: document.getElementById('doctorName').value
+                };
+                
+                // Validate required fields
+                if (!patientInfo.name || !patientInfo.age || !patientInfo.gender) {
+                    alert('Please fill in all required fields.');
+                    return;
+                }
+                
+                // Generate PDF
+                generatedPDF = generatePDFReport(patientInfo);
+                
+                // Hide patient info modal and show report preview modal
+                patientInfoModal.hide();
+                reportPreviewModal.show();
+            });
+            
+            // Download PDF when download button is clicked
+            downloadReportBtn.addEventListener('click', function() {
+                if (generatedPDF) {
+                    generatedPDF.save('Retinopathy_Analysis_Report.pdf');
+                }
+            });
+        });
     </script>
 </body>
 </html>
